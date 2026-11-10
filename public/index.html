@@ -1,0 +1,474 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#e4002b"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><title>Vitality Rewards</title>
+<style>.split{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;margin:6px 0}.split span{background:#f3f3f3;border-radius:8px;padding:3px 8px}.split .sv{background:#e8f5e9}.split .sb{background:#e3f2fd}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f4f6f8;color:#1b1f24}
+header{background:#e4002b;color:#fff;padding:12px 16px}header h1{margin:0;font-size:20px}
+nav{display:flex;overflow-x:auto;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:2}
+nav button{flex:none;border:0;background:none;padding:12px 14px;font-size:15px;cursor:pointer;border-bottom:3px solid transparent}
+nav button.on{border-color:#e4002b;font-weight:700}
+main{max-width:760px;margin:auto;padding:12px 12px 90px}
+nav#tabs{position:fixed;bottom:0;left:0;right:0;top:auto;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid #ddd;border-bottom:0;padding-bottom:env(safe-area-inset-bottom);overflow:visible}
+nav#tabs button{min-height:58px;padding:4px 0;font-size:11px;border-bottom:0;border-top:3px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#445}
+nav#tabs button .ic{font-size:20px;line-height:24px}nav#tabs button.on{border-top-color:#e4002b;color:#e4002b}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:3}.mon{margin:0;color:#fff;font-size:13px;display:flex;align-items:center;gap:6px}.mon input{width:auto;min-height:44px;padding:6px}
+button,input,select{min-height:44px}button.s{padding:10px 14px}input[type=checkbox]{min-height:0;width:24px;height:24px;vertical-align:middle}
+label:has(input[type=checkbox]){min-height:44px;display:flex;align-items:center;gap:8px}
+.hint{font-size:12px;color:#556;margin-top:3px}.err{color:#c62828;font-size:13px;font-weight:600;margin-top:3px}.err:empty{display:none}.inv{border:2px solid #c62828!important;background:#fff6f6}
+select:disabled{background:#f1f1f1;color:#333}
+details.ent{padding:0}details.ent summary{list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:56px;padding:10px 14px;cursor:pointer}details.ent summary::-webkit-details-marker{display:none}
+details.ent>*:not(summary){margin-left:14px;margin-right:14px}details.ent>:last-child{margin-bottom:12px}details.ent[open] .chev{transform:rotate(180deg)}.chev{color:#889}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}.seg button{border:1px solid #ccd;background:#fff;border-radius:10px;font-size:15px}.seg button.on{background:#e4002b;color:#fff;border-color:#e4002b}
+.card{background:#fff;border-radius:12px;padding:14px;margin:10px 0;box-shadow:0 1px 3px #0001}
+.big{font-size:30px;font-weight:800}.muted{color:#667;font-size:13px}
+.warn{background:#fff4d6;border-left:5px solid #f0a500;padding:10px;border-radius:8px;margin:10px 0}
+.ok{background:#e5f7ea;border-left:5px solid #1a9c4a;padding:10px;border-radius:8px}
+.bad{background:#fde7e9;border-left:5px solid #c62828;padding:10px;border-radius:8px}
+label{display:block;margin:6px 0;font-size:14px}input,select{font-size:16px;padding:8px;width:100%;border:1px solid #ccc;border-radius:8px}
+input[type=checkbox]{width:auto}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button.b{background:#e4002b;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-size:15px;margin:4px 4px 0 0;cursor:pointer}
+button.s{background:#eef;color:#223;border:0;border-radius:8px;padding:6px 10px;margin:2px;cursor:pointer}
+.bar{height:14px;background:#eee;border-radius:7px;overflow:hidden}.bar>i{display:block;height:100%;background:#1a9c4a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;font-size:14px}.grid b{display:block;font-size:17px}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;background:#dde}.tag.p{background:#d4f0dc}
+h2{margin:6px 0}h3{margin:8px 0 4px}
+</style></head><body>
+<header><h1>Vitality Rewards</h1><label class="mon">Month <input type="month" id="month"></label></header>
+<nav id="tabs"></nav><main id="app"></main>
+<script>
+/*CALC_START*/
+function round2(x){return Math.round((x+Number.EPSILON)*100)/100}
+function num(x){var n=parseFloat(x);return isFinite(n)?n:0}
+function toMiles(r,s){return Math.round(r*num(s.milesPerRand))}
+function blankInf(v){return v===''||v==null?Infinity:num(v)}
+function capFor(sec,s){return s.membership==='family'?blankInf(sec.capFamily):blankInf(sec.capSingle)}
+function assessDone(s){return !!(s.assess.ageDone&&s.assess.checkDone)}
+// an assessment counts from the 1st of the month after it was done, for 12 months; no date = counts (older saves)
+function assessWindow(d){var m=/^(\d{4})-(\d{2})/.exec(d||'');if(!m)return null;var y=+m[1],mo=+m[2]+1;if(mo>12){mo=1;y++}var a=y+'-'+String(mo).padStart(2,'0')+'-01';return[a,(y+1)+'-'+String(mo).padStart(2,'0')+'-01']}
+function assessOk(done,d,on){if(!done)return false;var w=assessWindow(d);if(!w||!on)return true;return on>=w[0]&&on<w[1]}
+function assessCount(s,on){return (assessOk(s.assess.ageDone,s.assess.ageDate,on)?1:0)+(assessOk(s.assess.checkDone,s.assess.checkDate,on)?1:0)}
+function tierPct(sec,s,on){var n=assessCount(s,on);return num(n>=2?sec.primaryPct:n===1?sec.onePct:sec.activationPct)}
+function hfChannel(shop){return /Sixty60|online/i.test(shop||'')?'online':'instore'}
+function hfIsPrimary(e,s){return hfChannel(e.shop)==='online'?e.shop===s.hf.primaryOnline:e.shop===s.hf.primaryInstore}
+function hfRate(e,s){if(!hfIsPrimary(e,s))return{v:num(s.hf.secondaryPct),b:0};
+ return{v:tierPct(s.hf,s,e.date),b:s.bank.hfBoostOn?num(s.hf.boostPct):0}}
+function hcIsPrimary(e,s){return e.partner===s.hc.primary}
+// Bank (Vitality Money) portion is extra on top of the Vitality %; Discovery: boost at primary partner only
+function hcRate(e,s){if(!hcIsPrimary(e,s))return{v:num(s.hc.secondaryPct),b:s.bank.hcCardOn?num(s.hc.secondaryBankPct):0};
+ return{v:tierPct(s.hc,s,e.date),b:s.bank.hcCardOn?num(s.hc.bankPct):0}}
+function hbRate(e,s){return{v:tierPct(s.hb,s,e.date),b:s.bank.hbCardOn?num(s.hb.bankPct):0}}
+function fuelRate(e,s){if(s.fuel.stations.indexOf(e.station)<0)return{v:0,b:0};return{v:num(s.fuel.drivePct),b:s.bank.fuelBankOn?num(s.fuel.bankPct):0}}
+// generic month calc: spend cap applied cumulatively in date order; optional min per transaction and reward cap (rand)
+function capMonth(entries,s,o){var left=o.cap,rleft=o.rewardCap==null?Infinity:o.rewardCap;
+ return entries.slice().sort(function(a,b){return a.date<b.date?-1:a.date>b.date?1:0}).map(function(e){
+ var q=num(e[o.amt||'qualifying']),below=o.min!=null&&q<o.min,c=below?0:Math.min(q,Math.max(left,0));left-=c;
+ var rt=o.rate(e);if(typeof rt==='number')rt={v:rt,b:0};var p=rt.v+rt.b,rv=round2(c*rt.v/100),rb=round2(c*rt.b/100),r=round2(rv+rb),rc=false;
+ if(r>rleft){r=round2(Math.max(rleft,0));rv=p?round2(r*rt.v/p):0;rb=round2(r-rv);rc=true}rleft-=r;
+ return{id:e.id,qualifying:q,capped:c,capApplied:!below&&c<q,belowMin:below,rewardCapApplied:rc,primary:o.prim?o.prim(e):true,pct:p,pctV:rt.v,pctB:rt.b,rewardV:rv,rewardB:rb,milesV:toMiles(rv,s),milesB:toMiles(rb,s),reward:r,miles:toMiles(r,s),effective:round2(q-r),capLeft:left,rewardLeft:rleft}})}
+function calcHFMonth(es,s){return capMonth(es,s,{cap:capFor(s.hf,s),rate:function(e){return hfRate(e,s)},prim:function(e){return hfIsPrimary(e,s)}})}
+function calcHCMonth(es,s){return capMonth(es,s,{cap:capFor(s.hc,s),rate:function(e){return hcRate(e,s)},prim:function(e){return hcIsPrimary(e,s)}})}
+function calcHBMonth(es,s){return capMonth(es,s,{cap:capFor(s.hb,s),amt:'amount',rate:function(e){return hbRate(e,s)}})}
+function calcFuelMonth(es,s){var m=num(s.milesPerRand)||10;return capMonth(es,s,{cap:Infinity,amt:'amount',min:s.fuel.minTx===''?null:num(s.fuel.minTx),
+ rewardCap:s.fuel.capMiles===''?null:num(s.fuel.capMiles)/m,rate:function(e){return fuelRate(e,s)},prim:function(e){return s.fuel.stations.indexOf(e.station)>=0}})}
+function sum(a,k){return round2(a.reduce(function(t,x){return t+x[k]},0))}
+// ---- Slip parser (pure, lenient for OCR errors) ----
+var STORES=[['Checkers Sixty60',['SIXTY60']],['Checkers',['CHECKERS','XTRASAVINGS']],['Woolworths',['WOOLWORTHS','WOOLIES','MYDIFFERENCE']],['Dis-Chem',['DISCHEM','BETTERREWARDS']],['Clicks',['CLICKS','CLUBCARD']],['Baby City',['BABYCITY']],['Babies R Us',['BABIESRUS','TOYSRUS']]];
+function ocrNorm(s){return String(s).toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/5/g,'S').replace(/0/g,'O').replace(/1/g,'I').replace(/8/g,'B').replace(/6/g,'G')}
+function fuzzyHas(hay,needle){needle=ocrNorm(needle);if(hay.indexOf(needle)>=0)return true;var k=needle.length>=8?2:1;
+ for(var i=0;i+needle.length<=hay.length;i++){var d=0;for(var j=0;j<needle.length&&d<=k;j++)if(hay[i+j]!==needle[j])d++;if(d<=k)return true}return false}
+function detectStore(lines){var top=lines.slice(0,8).map(ocrNorm),all=lines.map(ocrNorm);
+ for(var pass=0;pass<2;pass++){var L=pass?all:top;for(var i=0;i<STORES.length;i++)for(var j=0;j<STORES[i][1].length;j++)if(L.some(function(h){return fuzzyHas(h,STORES[i][1][j])}))return STORES[i][0]}
+ var raw=lines.join(' ');if(/086\s?0\s?0?22\s?002|W[O0]{2}L\s?W[O0]R|W[O0]{2}\s?LW/i.test(raw))return 'Woolworths';return ''}
+function fixNum(t){return t.replace(/,(?=\d{3})/g,'').replace(/[Oo]/g,'0').replace(/[Ss]/g,'5').replace(/[lI|!]/g,'1').replace(/B/g,'8').replace(/Z/g,'2')}
+var PROMO=/^\W*R?\s?([0-9OoSlI,.]+(?:\s\d{2}\b)?)\s+l[e3][a-z]{1,2}\s*pr[a-z0-9]{1,4}\.?\W*R?\s?([0-9OoSlI,.]+(?:\s\d{2}\b)?)/i;
+function hasMark(s){s=String(s).replace(/([a-z0-9])V(?=[^A-Za-z0-9]|$)/g,'$1 V').replace(/^[^A-Za-z0-9]*([SZ52][^A-Za-z0-9]+)?/,'');var t=s.split(/\s+/).slice(1);
+ return t.some(function(w){w=w.replace(/^[^A-Za-z0-9¥*\\]+|[^A-Za-z0-9¥°©*\/]+$/g,'');return /^(VIT|V[I1l|!][T7]|VLT|\*V|\\\/|[Vv¥][Vvy¥°©*]{0,2}|[Ww][Vv]|vy)$/.test(w)})}
+var MARK=/(^|[\s*:;~,._'"“”`^-])(V[I1l|!][T7]|VLT|\\\/|\*\s?V|[Vv¥y]|V[¥y°©*]+)(?=[^A-Za-z0-9]|$)/;
+var PRICE=/(?<![A-Za-z0-9.,])(-?)(?:R\s?)?(\d{1,3}(?:,\d{3})+|[0-9OoSlI|B]{1,5})\s?[.,·:]\s?([0-9OoSlI|B]{2})(?![0-9A-Za-z])\s*(-)?/g;
+function findPrices(l){var out=[],m;PRICE.lastIndex=0;while(m=PRICE.exec(l)){var a=fixNum(m[2]),b=fixNum(m[3]);if(!/\d/.test(m[2]+m[3])||!/^\d+$/.test(a+b))continue;
+ var v=parseFloat(a+'.'+b);if(m[1]||m[4])v=-v;out.push({v:v,index:m.index,end:m.index+m[0].length})}
+ if(!out.length){var s=l.match(/(?:^|\s)(\d{1,4}) (\d{2})\s*$/)||null;if(s&&/[A-Za-z]{2}/.test(l))out.push({v:parseFloat(s[1]+'.'+s[2]),index:l.lastIndexOf(s[1]+' '+s[2]),end:l.length,guessDec:true});
+  else if((s=l.match(/\s(\d{3,5})\s*$/))&&/[A-Za-z]{3}/.test(l)&&!/\d\s*(G|KG|ML|L|S)\b/i.test(l.slice(-8)))if(parseInt(s[1],10)>=100)out.push({v:parseInt(s[1],10)/100,index:l.lastIndexOf(s[1]),end:l.length,guessDec:true})}
+ return out}
+var TOT=/\b(T[O0]TAL(?!\s*SAV)|AM[O0]UNT\s*DUE|BALANCE\s*DUE|T[O0]\s*PAY|GRAND\s*T[O0]TAL)\b/i,TEND=/\b(CARD|TENDER|CASH|EFT|PAID)\b/i,SUB=/SUB\s*-?\s*T[O0]TAL|VAT|SAVINGS|YOU\s*SAVED/i;
+var SKIP=/(less\s*pr[o0]m[o0]|DISC[O0]UNT|LOYALTY|www\.|\.co\.za|HELP\s*LINE|ACC[O0]UNT|NUMBER|\*{3})|\b(AUTH|LIQUOR|VAT|TAX|TEL|CHANGE|ROUNDING|SAVINGS|SAVED|POINTS|APPROVED|AUTH|REF|VISA|MASTERCARD|DEBIT|CREDIT|DISCOVERY\s*BANK|INVOICE|CASHIER|TILL|SLIP|THANK)\b/i;
+function parseSlip(text,kws){var lines=String(text).split(/\r?\n/).map(function(l){return l.replace(/[ \t]+/g,' ').trim()}).filter(Boolean),out={store:'',date:'',items:[],tillTotal:null,vitalityTotal:null,markerFound:false,priceLines:0};
+ out.store=detectStore(lines);
+ var dt=String(text).replace(/(\d)[Oo]|[Oo](\d)/g,function(x){return x.replace(/[Oo]/,'0')}),m,d;
+ if(m=dt.match(/\b(20\d\d)\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\b/))d=[m[1],m[2],m[3]];else if(m=dt.match(/\b(\d{1,2})\s?[\/\-.]\s?(\d{1,2})\s?[\/\-.]\s?(20\d\d|\d\d)\b/))d=[m[3].length===2?'20'+m[3]:m[3],m[2],m[1]];
+ if(d&&+d[1]>=1&&+d[1]<=12&&+d[2]>=1&&+d[2]<=31)out.date=d[0]+'-'+('0'+d[1]).slice(-2)+'-'+('0'+d[2]).slice(-2);
+ var pend=null,tender=null;
+ function add(name,price,marker){if(marker)out.markerFound=true;out.items.push({name:name,price:price,marker:!!marker});pend=null}
+ lines.forEach(function(raw){var l=raw.replace(/(V[I1l|!][T7])(\d)/g,'$1 $2').replace(/([a-z0-9])V(?=[^A-Za-z0-9]|$)/g,'$1 V'),ps=findPrices(l),marker=hasMark(ps.length?l.slice(0,ps[ps.length-1].index):l)||MARK.test(' '+l+' ')&&!/^\W*[SZ52]?\W*[Vv¥]\W/.test(l);
+  var pm=l.match(PROMO);if(pm){var pn=function(t){t=fixNum(t).replace(/\s(\d{2})$/,function(a,b){return /\./.test(t)?b:"."+b}).replace(/[^0-9.]/g,"");return parseFloat(t)},x=pn(pm[1]),y=pn(pm[2]);if(x>y&&y>0&&x<5000){var net=Math.round((x-y)*100)/100;if(pend){var pm0=pend;add(pm0.name,net,pm0.marker);out.items[out.items.length-1].promoNet=net;out.priceLines++}else if(out.items.length)out.items[out.items.length-1].promoNet=net}pend=null;return}
+  if(/(vitality|healthy\s*(food|care|baby)|\bvit\b).*(total|qualif|spend)|(total|qualif).*(vitality|healthy\s*(food|care|baby))/i.test(l)&&ps.length){out.vitalityTotal=Math.abs(ps[ps.length-1].v);pend=null;return}
+  if(TOT.test(l)&&!SUB.test(l)){if(ps.length&&out.tillTotal==null){out.tillTotal=Math.abs(ps[ps.length-1].v);out.tillTotalFound=true}pend=null;return}
+  if(TEND.test(l)&&!/[A-Z]{3,}\s+[A-Z]{3,}\s+[A-Z]{3,}/.test(l.replace(TEND,''))){if(ps.length&&tender==null)tender=Math.abs(ps[ps.length-1].v);return}
+  if(ps.length&&ps[ps.length-1].v<0&&out.items.length&&!/less\s*pr[o0]m[o0]/i.test(l)){var q0=out.items[out.items.length-1];q0.price=Math.round((q0.price+ps[ps.length-1].v)*100)/100;return}
+  if(SKIP.test(l)||SUB.test(l)){pend=null;return}
+  if(/^-{3,}|^[=*_]{3,}/.test(l))return;
+  var qty=/^\s*\d+\s*[@xX*]\s*R?\s?\d/.test(l);
+  if(qty){if(pend&&ps.length)add(pend.name,ps[ps.length-1].v,pend.marker||marker);out.priceLines+=ps.length?1:0;return}
+  if(!ps.length){var nm=l.replace(MARK,' ').replace(/\s+/g,' ').trim();nm=nm.replace(/^[SZ52]\s+(?=[A-Za-z0-9])/,'');if(/[A-Za-z]{3}/.test(nm)&&!/\d{6,}/.test(nm.replace(/\s/g,'')))pend={name:nm,marker:marker};return}
+  var last=ps[ps.length-1];out.priceLines++;
+  var name=l.slice(0,last.index).replace(/^\d{6,}\s*/,'').replace(/^[SZ52]\s+(?=[A-Za-z0-9])/,'').replace(MARK,' ').replace(MARK,' ').replace(/[*]/g,' ').replace(/\s+/g,' ').trim();
+  if(!/[A-Za-z]{2}/.test(name)&&/\d{1,2}\s?[\/\-.]\s?\d{1,2}\s?[\/\-.]\s?\d{2,4}|\b\d{1,2}:\d{2}\b/.test(l)){pend=null;return}
+  if(!/[A-Za-z]{2}/.test(name)){if(last.v<0&&out.items.length){var q=out.items[out.items.length-1];q.price=Math.round((q.price+last.v)*100)/100;return}
+   if(pend){add(pend.name,last.v,pend.marker||marker)}return}
+  if(last.v<0&&out.items.length&&/disc|promo|less|saving|off|deal/i.test(name)){var p=out.items[out.items.length-1];p.price=Math.round((p.price+last.v)*100)/100;return}
+  if(last.v<=0)return;
+  add(name,last.v,marker)});
+ var kw=String(kws||'').toLowerCase().split(',').map(function(k){return k.trim()}).filter(Boolean);
+ out.items.forEach(function(it){it.guess=!out.markerFound&&kw.some(function(k){return it.name.toLowerCase().indexOf(k)>=0});it.qualifies=out.markerFound?it.marker:it.guess});
+ if(out.tillTotal==null&&tender!=null){out.tillTotal=tender;out.tillTotalFound=true}
+ if(out.tillTotal==null)out.tillTotal=Math.round(out.items.reduce(function(t,i){return t+i.price},0)*100)/100;
+ out.qualifyingSum=Math.round(out.items.filter(function(i){return i.qualifies}).reduce(function(t,i){return t+i.price},0)*100)/100;
+ return out}
+function nkey(n){return String(n).toLowerCase().replace(/[^a-z ]/g,' ').split(/\s+/).filter(function(w){return w.length>1}).join(' ')}
+function dice(a,b){if(!a||!b)return 0;var g=function(s){var r={};for(var i=0;i<s.length-1;i++){var k=s.substr(i,2);r[k]=(r[k]||0)+1}return r},A=g(a),B=g(b),n=0,t=0,k;for(k in A){t+=A[k];if(B[k])n+=Math.min(A[k],B[k])}for(k in B)t+=B[k];return t?2*n/t:0}
+var CONF={'5':'6','6':'58','8':'0369','0':'8','3':'8','9':'0','1':'7','7':'1'};
+function digitAlts(v){var s=v.toFixed(2),out=v<100?[parseFloat('1'+s)]:[];for(var i=0;i<s.length;i++){var a=CONF[s[i]]||'';for(var j=0;j<a.length;j++)out.push(parseFloat(s.slice(0,i)+a[j]+s.slice(i+1)))}return out}
+function mergeParses(ps){ps=ps.filter(Boolean);ps.forEach(function(p){p.items.forEach(function(it){it.w=p.w||1})});if(!ps.length)return null;var best=ps[0],r2=function(x){return Math.round(x*100)/100};
+ var groups=best.items.map(function(it,i){return{base:it,pos:i/Math.max(1,best.items.length),m:[it]}});
+ var extra=[];
+ ps.slice(1).forEach(function(p){var used={};p.items.forEach(function(it,i){var pos=i/Math.max(1,p.items.length),k=nkey(it.name),bi=-1,bs=0;
+  groups.forEach(function(g,gi){if(used[gi]||Math.abs(g.pos-pos)>0.3)return;var d=dice(k,nkey(g.base.name));if(Math.abs(g.base.price-it.price)<0.005)d+=0.15;if(d>bs){bs=d;bi=gi}});
+  if(bi>=0&&bs>=0.5){used[bi]=1;groups[bi].m.push(it)}else extra.push({it:it,pos:pos})})});
+ // items missing from best but seen in 2+ other variants
+ var ex=[];extra.forEach(function(e){var k=nkey(e.it.name);if(k.length<5)return;var c=ex.filter(function(x){return dice(k,nkey(x.base.name))>=0.6&&Math.abs(x.pos-e.pos)<0.2})[0];if(c)c.m.push(e.it);else ex.push({base:e.it,pos:e.pos,m:[e.it],extra:true})});
+ ex.forEach(function(x){if(x.m.length>=2)groups.push(x)});if(ps.length>=4)groups=groups.filter(function(g){return g.m.length>=2||/[a-z]{4}/.test(nkey(g.base.name))});groups.sort(function(a,b){return a.pos-b.pos});
+ var items=groups.map(function(g){var v={};g.m.forEach(function(it,i){var k=it.price.toFixed(2),w=(it.w||1);v[k]=(v[k]||0)+(i===0&&!g.extra?w+0.1:w);if(it.promoNet>0){var q=it.promoNet.toFixed(2);v[q]=(v[q]||0)+2.5}});
+  Object.keys(v).forEach(function(a){Object.keys(v).forEach(function(b){if(a!==b&&a.length===b.length){var d=0,six=0;for(var j=0;j<a.length;j++)if(a[j]!==b[j]){d++;if(a[j]==='6'&&b[j]==='5')six=1}if(d===1&&six)v[b]+=0.6}})});
+  var bk=null,tw=0;for(var k in v){tw+=v[k];if(bk==null||v[k]>v[bk])bk=k}var mk=g.m.filter(function(it){return it.marker}).length;
+  var name=g.m.map(function(it){return it.name}).sort(function(a,b){return (b.match(/[A-Za-z]/g)||[]).length/(b.length||1)-(a.match(/[A-Za-z]/g)||[]).length/(a.length||1)})[0];
+  return{name:name.replace(/^[^A-Za-z0-9]+/,'').replace(/^[SZ52]\s+(?=[A-Za-z0-9])/,'').trim(),price:parseFloat(bk),marker:mk/g.m.length>=0.34,guess:g.base.guess,votes:g.m.length,conf:v[bk]}});
+ var tv={};ps.forEach(function(p,i){if(p.tillTotalFound){var k=p.tillTotal.toFixed(2);tv[k]=(tv[k]||0)+(p.w||1)+(i===0?0.1:0)}});
+ var tot=null;for(var k in tv)if(tot==null||tv[k]>tv[tot])tot=k;tot=tot==null?null:parseFloat(tot);
+ var sum=function(){return r2(items.reduce(function(t,i){return t+i.price},0))},fixed='';
+ if(tot!=null&&Math.abs(sum()-tot)>0.005){var cands=Object.keys(tv).map(parseFloat);cands.forEach(function(t){digitAlts(t).forEach(function(a){if(cands.indexOf(a)<0)cands.push(a)})});
+  var sols=[];cands.forEach(function(t){var d=r2(t-sum());if(Math.abs(d)<0.005)sols.push({t:t});items.forEach(function(it,ii){digitAlts(it.price).forEach(function(a){if(Math.abs(r2(a-it.price)-d)<0.005)sols.push({t:t,i:ii,a:a})})})});
+  // prefer solutions using the voted total
+  var pick=sols.filter(function(s){return s.t===tot});if(!pick.length)pick=sols;
+  if(pick.length>1){pick.sort(function(a,b){return (a.i==null?-1:items[a.i].conf)-(b.i==null?-1:items[b.i].conf)});var c0=pick[0].i==null?-1:items[pick[0].i].conf,c1=pick[1].i==null?-1:items[pick[1].i].conf;if(c0<c1-0.5)pick=[pick[0]]}
+  if(pick.length===1){var s=pick[0];tot=s.t;if(s.i!=null){fixed=items[s.i].name+': '+items[s.i].price.toFixed(2)+' -> '+s.a.toFixed(2);items[s.i].price=s.a}}}
+ var out={};for(var k in best)out[k]=best[k];if(!out.store){var sv={};ps.forEach(function(p){if(p.store)sv[p.store]=(sv[p.store]||0)+1});for(var k2 in sv)if(!out.store||sv[k2]>sv[out.store])out.store=k2}out.items=items;out.markerFound=items.some(function(i){return i.marker});
+ items.forEach(function(it){it.qualifies=out.markerFound?it.marker:it.guess});
+ if(tot!=null){out.tillTotal=tot;out.tillTotalFound=true}out.sumMatchesTotal=tot!=null&&Math.abs(sum()-tot)<0.005;out.autoFix=fixed;
+ out.qualifyingSum=r2(items.filter(function(i){return i.qualifies}).reduce(function(t,i){return t+i.price},0));return out}
+var DEFAULTS={milesPerRand:10,membership:'single',assess:{ageDone:false,ageDate:'',checkDone:false,checkDate:''},bank:{hfBoostOn:false,hcCardOn:false,hbCardOn:false,fuelBankOn:true},
+ hf:{primaryInstore:'Checkers',primaryOnline:'Checkers Sixty60',activationPct:10,onePct:15,primaryPct:25,secondaryPct:10,boostPct:50,capSingle:2500,capFamily:5000},
+ hc:{primary:'Clicks',activationPct:10,onePct:15,primaryPct:25,bankPct:25,secondaryPct:10,secondaryBankPct:0,capSingle:2000,capFamily:4000},
+ hb:{activationPct:10,onePct:15,primaryPct:25,bankPct:25,capSingle:2000,capFamily:4000},
+ fuel:{stations:['bp','Shell','Gautrain'],drivePct:50,bankPct:15,minTx:75,capMiles:19500},
+ scan:{hf:'apple,banana,orange,pear,lettuce,spinach,tomato,carrot,broccoli,onion,potato,sweet potato,avocado,berries,oats,brown rice,wholewheat,whole wheat,rye,lentil,chickpea,beans,eggs,chicken breast,fish,hake,salmon,tuna in water,plain yoghurt,fat free milk,low fat milk,skim milk,olive oil,nuts,almonds,water',hc:'sunscreen,spf,plaster,nappies,nappy,toothpaste,toothbrush,floss,mouthwash,sanitiser,bandage,vitamin,eye drops,contact lens,nicotine,moisturiser,lip balm,thermometer',hb:'nappies,nappy,wipes,barrier cream,bum cream,pram,stroller,cot,car seat,formula,bottle,teat,dummy,baby wash,baby lotion',fast:false,mode:'quick'}};
+function runChecks(){var s=JSON.parse(JSON.stringify(DEFAULTS));s.assess.ageDone=s.assess.checkDone=true;var out=[];
+ function t(n,a,b){out.push({name:n,pass:Math.abs(a-b)<0.001,got:a,want:b})}
+ var a=calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'instore',qualifying:1000}],s)[0];t('HF R1,000 primary 25% = R250',a.reward,250);t('HF miles = 2,500',a.miles,2500);t('HF effective cost = R750',a.effective,750);
+ var b=calcHFMonth([{date:'2026-11-01',shop:'Woolworths',channel:'instore',qualifying:1000}],s)[0];t('HF R1,000 secondary 10% = R100',b.reward,100);t('HF secondary effective = R900',b.effective,900);
+ t('HF R3,000 single cap R2,500 at 25% = R625',calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'instore',qualifying:3000}],s)[0].reward,625);
+ var c=calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:1000}],s)[0];t('HC R1,000 at 25% = R250',c.reward,250);t('HC effective = qualifying - reward',c.effective,1000-c.reward);
+ var s2=JSON.parse(JSON.stringify(s));s2.hc.capSingle=1250;var d=calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:2000}],s2)[0];t('HC R2,000 25% cap R1,250 = R312.50',d.reward,312.5);t('HC capped effective = R1,687.50',d.effective,1687.5);
+ s2.hc.capSingle=1250;var d2=calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:1000},{date:'2026-11-02',partner:'Clicks',qualifying:1000}],s2);t('HC cap carries across entries (2nd = R62.50)',d2[1].reward,62.5);
+ var s3=JSON.parse(JSON.stringify(s));s3.bank.hcCardOn=true;s3.bank.hbCardOn=true;t('HC R1,000 at 25% + 25% Bank = R500',calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:1000}],s3)[0].reward,500);
+ t('HealthyBaby R1,000 at 25% = R250',calcHBMonth([{date:'2026-11-01',partner:'Baby City',amount:1000}],s)[0].reward,250);
+ t('Fuel R74 below R75 minimum = R0',calcFuelMonth([{date:'2026-11-01',station:'bp',amount:74}],s)[0].reward,0);
+ t('Fuel R1,000 bp at 50% Drive + 15% Bank = R650',calcFuelMonth([{date:'2026-11-01',station:'bp',amount:1000}],s)[0].reward,650);
+ t('Fuel reward capped at 19,500 Miles = R1,950',sum(calcFuelMonth([{date:'2026-11-01',station:'Shell',amount:2000},{date:'2026-11-02',station:'Shell',amount:2000}],s),'reward'),1950);
+ var sb=JSON.parse(JSON.stringify(s));sb.bank.hfBoostOn=true;var x=calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'instore',qualifying:1000}],sb)[0];
+ t('HF split: Vitality 25% = R250',x.rewardV,250);t('HF split: Bank 50% = R500',x.rewardB,500);t('HF split: combined 75% = R750',x.reward,750);t('HF split: Bank Miles = 5,000',x.milesB,5000);
+ t('HF secondary has no Bank portion',calcHFMonth([{date:'2026-11-01',shop:'Woolworths',channel:'instore',qualifying:1000}],sb)[0].rewardB,0);
+ var y=calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'instore',qualifying:3000}],sb)[0];t('HF cap R2,500 on combined: Vitality R625',y.rewardV,625);t('HF cap R2,500 on combined: Bank R1,250',y.rewardB,1250);
+ var z=calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:1000}],s3)[0];t('HC split: Vitality 25% = R250',z.rewardV,250);t('HC split: Bank 25% = R250',z.rewardB,250);
+ t('HC other partner: no Bank portion',calcHCMonth([{date:'2026-11-01',partner:'Dis-Chem',qualifying:1000}],s3)[0].rewardB,0);
+ var hb2=calcHBMonth([{date:'2026-11-01',partner:'Baby City',amount:1000}],s3)[0];t('HealthyBaby split: R250 + R250 Bank = R500',hb2.reward,500);t('HealthyBaby Bank portion = R250',hb2.rewardB,250);
+ var f=calcFuelMonth([{date:'2026-11-01',station:'bp',amount:1000}],s)[0];t('Fuel split: Drive 50% = R500',f.rewardV,500);t('Fuel split: Bank 15% = R150',f.rewardB,150);
+ var fc=calcFuelMonth([{date:'2026-11-01',station:'Shell',amount:4000}],s)[0];t('Fuel cap splits pro-rata: Drive R1,500',fc.rewardV,1500);t('Fuel cap splits pro-rata: Bank R450',fc.rewardB,450);
+ var s1=JSON.parse(JSON.stringify(DEFAULTS));s1.assess.ageDone=true;
+ t('One assessment: HF primary 15% = R150',calcHFMonth([{date:'2026-11-01',shop:'Checkers',qualifying:1000}],s1)[0].reward,150);
+ t('One assessment: HC primary 15% = R150',calcHCMonth([{date:'2026-11-01',partner:'Clicks',qualifying:1000}],s1)[0].reward,150);
+ t('One assessment: HealthyBaby 15% = R150',calcHBMonth([{date:'2026-11-01',partner:'Baby City',amount:1000}],s1)[0].reward,150);
+ var s0=JSON.parse(JSON.stringify(DEFAULTS));t('No assessment: HF primary 10% = R100',calcHFMonth([{date:'2026-11-01',shop:'Checkers',qualifying:1000}],s0)[0].reward,100);
+ t('One assessment: secondary still 10%',calcHFMonth([{date:'2026-11-01',shop:'Woolworths',qualifying:1000}],s1)[0].reward,100);
+ var sd=JSON.parse(JSON.stringify(s));sd.assess.ageDate='2026-03-15';sd.assess.checkDate='2026-05-20';
+ t('Dates: before both windows = 10%',calcHFMonth([{date:'2026-03-31',shop:'Checkers',qualifying:1000}],sd)[0].reward,100);
+ t('Dates: Age counts from 1 Apr (not 31 Mar)',calcHFMonth([{date:'2026-04-01',shop:'Checkers',qualifying:1000}],sd)[0].reward,150);
+ t('Dates: both count from 1 Jun = 25%',calcHFMonth([{date:'2026-06-01',shop:'Checkers',qualifying:1000}],sd)[0].reward,250);
+ t('Dates: Age lapses after 12 months (31 Mar 2027 still 25%)',calcHFMonth([{date:'2027-03-31',shop:'Checkers',qualifying:1000}],sd)[0].reward,250);
+ t('Dates: Age lapses 1 Apr 2027 = 15%',calcHFMonth([{date:'2027-04-01',shop:'Checkers',qualifying:1000}],sd)[0].reward,150);
+ t('Dates: both lapsed 1 Jun 2027 = 10%',calcHFMonth([{date:'2027-06-01',shop:'Checkers',qualifying:1000}],sd)[0].reward,100);
+ t('Dates: December assessment starts 1 Jan next year',assessWindow('2026-12-10')[0]==='2027-01-01'?1:0,1);
+ t('Each entry uses its own date (same month list)',sum(calcHCMonth([{date:'2026-05-31',partner:'Clicks',qualifying:100},{date:'2026-06-01',partner:'Clicks',qualifying:100}],sd),'reward'),40);
+ t('Checkers is always in-store (primary even if saved as online)',calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'online',qualifying:1000}],s)[0].reward,250);
+ t('Sixty60 is always online (primary online)',calcHFMonth([{date:'2026-11-01',shop:'Checkers Sixty60',channel:'instore',qualifying:1000}],s)[0].reward,250);
+ return out}
+if(typeof module!=='undefined')module.exports={parseSlip:parseSlip,mergeParses:mergeParses,calcHFMonth:calcHFMonth,calcHCMonth:calcHCMonth,calcHBMonth:calcHBMonth,calcFuelMonth:calcFuelMonth,runChecks:runChecks,assessWindow:assessWindow,DEFAULTS:DEFAULTS};
+/*CALC_END*/
+var KEY='vitalityRewards.v1';
+function deepMerge(d,o){var r=JSON.parse(JSON.stringify(d));for(var k in o){if(o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k])&&r[k])r[k]=deepMerge(r[k],o[k]);else r[k]=o[k]}return r}
+function load(){try{var d=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){d={}}
+ var st0=d.settings||{};if(d.settings&&!st0.splitV){if(st0.hc&&+st0.hc.bankPct===50)st0.hc.bankPct=25;if(st0.hb&&+st0.hb.bankPct===50)st0.hb.bankPct=25;if(st0.bank&&st0.bank.hcCardOn&&st0.bank.hbCardOn==null)st0.bank.hbCardOn=true;if(st0.fuel&&st0.fuel.pct!=null&&st0.fuel.pct!==''){var fp=num(st0.fuel.pct);st0.fuel.drivePct=Math.min(50,fp);st0.fuel.bankPct=Math.max(0,fp-50);delete st0.fuel.pct}}st0.splitV=1;if(st0.hf&&/Woolies/.test(st0.hf.primaryOnline||''))st0.hf.primaryOnline='Woolworths online';
+ (d.hf||[]).forEach(function(e){if(/Woolies/.test(e.shop||''))e.shop='Woolworths online';e.channel=hfChannel(e.shop)});
+ return{settings:deepMerge(DEFAULTS,st0),hf:d.hf||[],hc:d.hc||[],fuel:d.fuel||[],hb:d.hb||(d.bru||[]).map(function(e){e.partner=e.partner||'Babies R Us';return e})}}
+var DB=load();function save(){localStorage.setItem(KEY,JSON.stringify(DB))}
+var S=function(){return DB.settings};
+function R(x){return 'R'+num(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function M(x){return Math.round(x).toLocaleString('en-US')+' Miles'}
+function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var monthEl=document.getElementById('month');var now=new Date();monthEl.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+monthEl.onchange=render;function inMonth(a){return a.filter(function(e){return (e.date||'').slice(0,7)===monthEl.value})}
+var TABS=['HealthyFood','HealthyCare','HealthyBaby','Fuel','Monthly Totals','Settings'],tab='HealthyFood',editing=null;
+function today(){var d=new Date();return d.toISOString().slice(0,10)}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+var FORMS={
+ hf:[['date','Date','date'],['shop','Shop','select',['Checkers','Checkers Sixty60','Woolworths','Woolworths online']],['channel','In-store or online (set by the shop)','select',['instore','online']],['till','Total till amount (R)','number'],['qualifying','Qualifying HealthyFood amount (R)','number','Only the HealthyFood items on the slip (marked V or VIT)']],
+ hc:[['date','Date','date'],['partner','Partner','select',['Clicks','Dis-Chem']],['till','Total till amount (R)','number'],['qualifying','Qualifying HealthyCare amount (R)','number','Only the HealthyCare catalogue items on the slip']],
+ fuel:[['date','Date','date'],['station','Where (paid with Discovery Bank virtual card)','select',['bp','Shell','Gautrain','Other']],['litres','Litres (optional)','number'],['amount','Rand spend (R)','number','Each fill-up must be at least the minimum in Settings']],
+ hb:[['date','Date','date'],['partner','Partner','select',['Baby City','Babies R Us']],['till','Total till amount (R)','number'],['amount','Qualifying HealthyBaby amount (R)','number','Only the HealthyBaby items on the slip'],['note','Note','text']]};
+function form(kind){var e=editing&&editing.kind===kind?editing.e:{date:today()};var h='<div class="card"><h3>'+(editing&&editing.kind===kind?'Edit entry':'Add entry')+'</h3><form id="f" novalidate>';
+ FORMS[kind].forEach(function(f){var v=e[f[0]]==null?'':e[f[0]];h+='<label>'+f[1];
+  if(kind==='hf'&&f[0]==='channel')v=hfChannel(e.shop||'Checkers');
+  if(f[2]==='select')h+='<select name="'+f[0]+'"'+(kind==='hf'&&f[0]==='channel'?' disabled':'')+'>'+f[3].map(function(o){return'<option'+(o===v?' selected':'')+' value="'+esc(o)+'">'+esc(o==='instore'?'In-store':o==='online'?'Online':o)+'</option>'}).join('')+'</select>';
+  else h+='<input name="'+f[0]+'" type="'+f[2]+'" '+(f[2]==='number'?'step="0.01" min="0" inputmode="decimal"':'')+' value="'+esc(v)+'">';
+  if(f[2]!=='select'&&f[3])h+='<div class="hint">'+f[3]+'</div>';if(kind==='hf'&&f[0]==='channel')h+='<div class="hint">Checkers and Woolworths are in-store; Sixty60 and Woolworths online are online.</div>';h+='<div class="err" data-err="'+f[0]+'"></div></label>'});
+ return h+'<button class="b" type="submit">Save</button>'+(editing?'<button class="s" type="button" id="cancel">Cancel</button>':'')+'</form></div>'}
+function bindForm(kind){var f=document.getElementById('f');if(kind==='hf'){f.shop.onchange=function(){f.channel.value=hfChannel(f.shop.value)}}
+ f.onsubmit=function(ev){ev.preventDefault();var o={};new FormData(f).forEach(function(v,k){o[k]=v});
+ if(kind==='hf')o.channel=hfChannel(o.shop);
+ f.querySelectorAll('[data-err]').forEach(function(d){d.textContent=''});f.querySelectorAll('.inv').forEach(function(d){d.classList.remove('inv')});
+ var errs={},qk=kind==='hf'||kind==='hc'?'qualifying':'amount';['till','qualifying','amount','litres'].forEach(function(k){if(o[k]!=null&&o[k]!==''&&num(o[k])<0)errs[k]='Amounts cannot be negative.'});
+ if(o[qk]===''||o[qk]==null)errs[qk]='Please type an amount.';
+ if(!errs[qk]&&!errs.till&&o.till!==''&&o.till!=null&&kind!=='fuel'&&num(o[qk])>num(o.till))errs[qk]='This is more than the till total ('+R(o.till)+'). The qualifying amount is part of the till total.';
+ if(!o.date)errs.date='Please pick a date.';
+ var ks=Object.keys(errs);if(ks.length){ks.forEach(function(k){var d=f.querySelector('[data-err="'+k+'"]');if(d)d.textContent='⚠️ '+errs[k];var i=f.querySelector('[name="'+k+'"]');if(i)i.classList.add('inv')});var fi=f.querySelector('.inv');if(fi)fi.focus();return}
+ if(editing){Object.assign(editing.e,o)}else{o.id=uid();DB[kind].push(o)}editing=null;save();render()};
+ var c=document.getElementById('cancel');if(c)c.onclick=function(){editing=null;render()}}
+function entryCard(kind,id,line,body){return '<details class="card ent"><summary><span class="l1">'+line+'</span><span class="chev">▾</span></summary>'+body+act(kind,id)+'</details>'}
+function act(kind,id){return'<button class="s" data-ed="'+kind+':'+id+'">Edit</button><button class="s" data-del="'+kind+':'+id+'">Delete</button>'}
+function bindActs(){document.querySelectorAll('[data-ed]').forEach(function(b){b.onclick=function(){var p=b.dataset.ed.split(':');editing={kind:p[0],e:DB[p[0]].find(function(x){return x.id===p[1]})};render();scrollTo(0,0)}});
+ document.querySelectorAll('[data-del]').forEach(function(b){b.onclick=function(){var p=b.dataset.del.split(':');if(confirm('Delete this entry?')){DB[p[0]]=DB[p[0]].filter(function(x){return x.id!==p[1]});save();render()}}})}
+function pc(x){return (Math.round(x*100)/100)+'%'}
+function splitRow(r,lab){return '<div class="split"><span class="sv">'+(lab||'Vitality')+' '+pc(r.pctV)+': <b>'+R(r.rewardV)+'</b> · '+M(r.milesV)+'</span><span class="sb">Discovery Bank '+pc(r.pctB)+': <b>'+R(r.rewardB)+'</b> · '+M(r.milesB)+'</span><span>Total '+pc(r.pct)+': <b>'+R(r.reward)+'</b></span></div>'}
+function splitSum(res,lab){return '<div class="split"><span class="sv">'+(lab||'Vitality')+' portion: <b>'+R(sum(res,'rewardV'))+'</b> · '+M(sum(res,'milesV'))+'</span><span class="sb">Discovery Bank portion: <b>'+R(sum(res,'rewardB'))+'</b> · '+M(sum(res,'milesB'))+'</span></div>'}
+function summary(t,res,lab){return'<div class="card"><div class="muted">'+t+' reward this month (Vitality + Discovery Bank)</div><div class="big">'+R(sum(res,'reward'))+'</div>'+splitSum(res,lab)+'<div>'+M(sum(res,'miles'))+' · qualifying '+R(sum(res,'qualifying'))+' · effective cost '+R(sum(res,'effective'))+'</div></div>'}
+function tierWarn(sec,where){var s=S(),n=assessCount(s,today()),cur=tierPct(sec,s,today());if(n>=2)return'';return'<div class="warn">⚠️ Do your Vitality Age and Health Check to move from '+num(sec.activationPct)+'% to '+num(sec.primaryPct)+'% '+where+'.'+(n===1?' One is done, so you are on '+cur+'% now.':' Doing one gets you '+num(sec.onePct)+'%.')+' The new rate starts on the 1st of the month after the assessment.</div>'}
+function viewHF(){var s=S(),h=tierWarn(s.hf,'at your primary partner');
+ h+='<div class="muted">Primary in-store: <b>'+esc(s.hf.primaryInstore)+'</b> · Primary online: <b>'+esc(s.hf.primaryOnline)+'</b></div>';
+ var res=calcHFMonth(inMonth(DB.hf),s),last=res.length?res[res.length-1].capLeft:capFor(s.hf,s);h+=summary('HealthyFood',res)+capBar(capFor(s.hf,s),last,'Monthly HealthyFood qualifying-spend cap ('+s.membership+')')+form('hf');
+ res.forEach(function(r){var e=DB.hf.find(function(x){return x.id===r.id});h+=entryCard('hf',e.id,'<b>'+R(r.reward)+' back</b> · '+M(r.miles)+'<br><span class="muted">'+esc(e.date)+' · '+esc(e.shop)+' · '+(r.primary?'Primary':'Secondary')+' '+r.pct+'%</span>','<div class="muted">'+(hfChannel(e.shop)==='online'?'Online':'In-store')+' · till '+R(e.till)+'</div>'+splitRow(r,SPLITLAB)+'<div class="grid"><div>Till total<b>'+R(e.till)+'</b></div><div>Qualifying<b>'+R(r.qualifying)+'</b></div><div>% back<b>'+r.pct+'%</b></div><div>Effective cost<b>'+R(r.effective)+'</b></div></div>'+(r.capApplied?'<div class="warn">Cap applied: only '+R(r.capped)+' of '+R(r.qualifying)+' earned a reward.</div>':''))});return h}
+function capBar(cap,left,label){if(!isFinite(cap))return'';var c=num(cap),used=c-Math.max(left,0),pc=c?Math.min(100,used/c*100):0;return'<div class="card"><div class="muted">'+label+'</div><div class="bar"><i style="width:'+pc+'%;background:'+(pc>=100?'#c62828':'#1a9c4a')+'"></i></div><div><b>'+R(Math.max(left,0))+'</b> of '+R(c)+' cap left this month</div></div>'}
+function viewHC(){var s=S(),h=tierWarn(s.hc,'at your primary partner');
+ h+='<div class="muted">Primary partner: <b>'+esc(s.hc.primary)+'</b> · Catalogue items only (sunscreen, plasters, nappies, skincare, dental…)</div>';
+ var res=calcHCMonth(inMonth(DB.hc),s),last=res.length?res[res.length-1].capLeft:capFor(s.hc,s);h+=summary('HealthyCare',res)+capBar(capFor(s.hc,s),last,'Monthly HealthyCare qualifying-spend cap ('+s.membership+')')+form('hc');
+ res.forEach(function(r){var e=DB.hc.find(function(x){return x.id===r.id});h+=entryCard('hc',e.id,'<b>'+R(r.reward)+' back</b> · '+M(r.miles)+'<br><span class="muted">'+esc(e.date)+' · '+esc(e.partner)+' · '+(r.primary?'Primary':'Secondary')+' '+r.pct+'%</span>',splitRow(r,SPLITLAB)+'<div class="grid"><div>Till total<b>'+R(e.till)+'</b></div><div>Qualifying<b>'+R(r.qualifying)+'</b></div><div>% back<b>'+r.pct+'%</b></div><div>Effective cost<b>'+R(r.effective)+'</b></div><div>Cap left after<b>'+(isFinite(r.capLeft)?R(r.capLeft):'No cap')+'</b></div></div>'+(r.capApplied?'<div class="warn">Cap applied: only '+R(r.capped)+' of '+R(r.qualifying)+' earned a reward.</div>':''))});return h}
+function viewFuel(){var s=S(),h='<div class="warn">ℹ️ New fuel model from 1 Nov 2026: pay at bp, Shell or Gautrain with your Discovery Bank virtual card. The old Vitality Drive card stops after 31 Dec 2026.</div>';
+ h+='<div class="muted">Up to '+(num(s.fuel.drivePct)+num(s.fuel.bankPct))+'% back ('+num(s.fuel.drivePct)+'% Vitality Drive + '+num(s.fuel.bankPct)+'% Discovery Bank) · transactions under '+R(s.fuel.minTx)+' earn nothing · max '+M(num(s.fuel.capMiles))+' a month</div>';
+ var res=calcFuelMonth(inMonth(DB.fuel),s),capR=num(s.fuel.capMiles)/(num(s.milesPerRand)||10);h+=summary('Fuel',res,'Vitality Drive');
+ if(s.fuel.capMiles!==''){var used=sum(res,'reward');h+='<div class="card"><div class="muted">Monthly Fuel reward cap</div><div class="bar"><i style="width:'+Math.min(100,used/capR*100)+'%"></i></div><div><b>'+M(Math.max(0,capR-used)*num(s.milesPerRand))+'</b> of '+M(num(s.fuel.capMiles))+' left this month</div></div>'}
+ h+=form('fuel');
+ res.forEach(function(r){var e=DB.fuel.find(function(x){return x.id===r.id});h+=entryCard('fuel',e.id,'<b>'+R(r.reward)+' back</b> · '+M(r.miles)+'<br><span class="muted">'+esc(e.date)+' · '+esc(e.station)+' · '+(r.primary?'Partner':'Not a partner')+'</span>',splitRow(r,'Vitality Drive')+'<div class="grid"><div>Spend<b>'+R(r.qualifying)+'</b></div>'+(e.litres?'<div>Litres<b>'+esc(e.litres)+'</b></div>':'')+'<div>% back<b>'+r.pct+'%</b></div><div>Effective cost<b>'+R(r.effective)+'</b></div></div>'+(r.belowMin?'<div class="warn">Under the '+R(s.fuel.minTx)+' minimum, so no reward.</div>':'')+(r.rewardCapApplied?'<div class="warn">Monthly Miles cap reached.</div>':''))});return h}
+function viewHB(){var s=S(),h=tierWarn(s.hb,'on HealthyBaby');
+ h+='<div class="muted">Baby City and Babies R Us. Own cap, separate from HealthyCare.</div>';
+ var res=calcHBMonth(inMonth(DB.hb),s),last=res.length?res[res.length-1].capLeft:capFor(s.hb,s);h+=summary('HealthyBaby',res)+capBar(capFor(s.hb,s),last,'Monthly HealthyBaby qualifying-spend cap ('+s.membership+')')+form('hb');
+ res.forEach(function(r){var e=DB.hb.find(function(x){return x.id===r.id});h+=entryCard('hb',e.id,'<b>'+R(r.reward)+' back</b> · '+M(r.miles)+'<br><span class="muted">'+esc(e.date)+' · '+esc(e.partner)+' · '+r.pct+'%</span>',(e.note?'<div class="muted">'+esc(e.note)+'</div>':'')+splitRow(r,SPLITLAB)+'<div class="grid"><div>Till total<b>'+R(e.till)+'</b></div><div>Qualifying<b>'+R(r.qualifying)+'</b></div><div>% back<b>'+r.pct+'%</b></div><div>Effective cost<b>'+R(r.effective)+'</b></div></div>'+(r.capApplied?'<div class="warn">Cap applied: only '+R(r.capped)+' earned.</div>':''))});return h}
+function viewTotals(){var s=S(),hf=calcHFMonth(inMonth(DB.hf),s),hc=calcHCMonth(inMonth(DB.hc),s),hb=calcHBMonth(inMonth(DB.hb),s),fu=calcFuelMonth(inMonth(DB.fuel),s);
+ var rows=[['HealthyFood',hf,'#2e7d32'],['HealthyCare',hc,'#1565c0'],['HealthyBaby',hb,'#8e24aa'],['Fuel',fu,'#ef6c00']],tot=rows.reduce(function(t,r){return t+sum(r[1],'reward')},0),mx=Math.max.apply(null,rows.map(function(r){return sum(r[1],'reward')}).concat([1]));
+ var h='<div class="card"><div class="muted">Total rewards for '+monthEl.value+' (HealthyFood + HealthyCare + HealthyBaby + Fuel)</div><div class="big">'+R(tot)+'</div><div>'+M(rows.reduce(function(t,r){return t+sum(r[1],'miles')},0))+'</div></div>';
+ h+='<div class="card"><div class="muted">All sections split</div>'+splitSum([].concat(hf,hc,hb,fu),'Vitality (incl. Drive)')+'</div>';
+ rows.forEach(function(r){var v=sum(r[1],'reward');h+='<div class="card"><h3>'+r[0]+'</h3><div class="bar"><i style="width:'+(v/mx*100)+'%;background:'+r[2]+'"></i></div>'+splitSum(r[1],r[0]==='Fuel'?'Vitality Drive':'Vitality')+'<div class="grid"><div>Reward<b>'+R(v)+'</b></div><div>Miles<b>'+M(sum(r[1],'miles'))+'</b></div><div>Qualifying spend<b>'+R(sum(r[1],'qualifying'))+'</b></div><div>Effective cost<b>'+R(sum(r[1],'effective'))+'</b></div></div></div>'});
+ return h}
+var SPLITLAB='Vitality',setAdv=false;var SET=[['Membership',[['membership','Membership type (sets which cap is used)','select',['single','family']]],1],
+ ['Assessments',[['assess.ageDone','Vitality Age assessment done','checkbox'],['assess.ageDate','Vitality Age date','date'],['assess.checkDone','Vitality Health Check done','checkbox'],['assess.checkDate','Health Check date','date']],1],
+ ['Your partners',[['hf.primaryInstore','HealthyFood primary in-store partner','select',['Checkers','Woolworths']],['hf.primaryOnline','HealthyFood primary online partner','select',['Checkers Sixty60','Woolworths online']],['hc.primary','HealthyCare primary partner','select',['Clicks','Dis-Chem']]],1],
+ ['Miles',[['milesPerRand','Discovery Miles per R1','number']]],
+ ['Discovery Bank (Vitality Money)',[['bank.hfBoostOn','Add the Discovery Bank portion to HealthyFood','checkbox'],['bank.hcCardOn','Add the Discovery Bank portion to HealthyCare','checkbox'],['bank.hbCardOn','Add the Discovery Bank portion to HealthyBaby','checkbox'],['bank.fuelBankOn','Add the Discovery Bank portion to Fuel','checkbox']],1],
+ ['HealthyFood rates',[['hf.activationPct','Activation % (primary, no assessments)','number'],['hf.onePct','Primary % with ONE assessment done','number'],['hf.primaryPct','Primary % with BOTH assessments done','number'],['hf.secondaryPct','Secondary partner %','number'],['hf.boostPct','Discovery Bank portion % – extra on top, primary partner only (max 50%)','number'],['hf.capSingle','Monthly qualifying cap – single (R)','number'],['hf.capFamily','Monthly qualifying cap – family (R)','number']]],
+ ['HealthyCare rates',[['hc.activationPct','Activation % (primary, no assessments)','number'],['hc.onePct','Primary % with ONE assessment done','number'],['hc.primaryPct','Primary % with BOTH assessments done','number'],['hc.bankPct','Discovery Bank portion % – extra on top at your primary partner (max 25%)','number'],['hc.secondaryBankPct','Discovery Bank portion % at the other partner (Discovery says none, so 0)','number'],['hc.secondaryPct','Secondary partner %','number'],['hc.capSingle','Monthly qualifying cap – single (R); Vitality Active members: R1,250','number'],['hc.capFamily','Monthly qualifying cap – family (R); Vitality Active: R2,500','number']]],
+ ['HealthyBaby rates',[['hb.activationPct','Activation % (no assessments)','number'],['hb.onePct','% with ONE assessment done','number'],['hb.primaryPct','% with BOTH assessments done','number'],['hb.bankPct','Discovery Bank portion % – extra on top (max 25%)','number'],['hb.capSingle','Monthly cap – single (R)','number'],['hb.capFamily','Monthly cap – family (R)','number']]],
+ ['Slip scanning – keyword guesses (only used when a slip has no VIT/V markers; comma-separated)',[['scan.hf','HealthyFood keywords','text'],['scan.hc','HealthyCare keywords','text'],['scan.hb','HealthyBaby keywords','text'],['scan.mode','Default slip scan','select',['quick','careful']],['scan.fast','Fast scan (more memory)','checkbox']]],
+ ['Fuel rates',[['fuel.drivePct','Vitality Drive portion % at bp / Shell / Gautrain (max 50%)','number'],['fuel.bankPct','Discovery Bank / Vitality Money portion % (max 15%)','number'],['fuel.minTx','Minimum per transaction (R) – below this earns nothing','number'],['fuel.capMiles','Monthly reward cap in Discovery Miles (D19,500 = R1,950)','number']]]];
+function gp(o,p){return p.split('.').reduce(function(a,k){return a[k]},o)}function sp(o,p,v){var k=p.split('.'),l=k.pop();k.reduce(function(a,x){return a[x]},o)[l]=v}
+function viewSettings(){var s=S(),h='<div class="seg"><button class="'+(setAdv?'':'on')+'" id="sbasic">Basic</button><button class="'+(setAdv?'on':'')+'" id="sadv">Advanced (rates & caps)</button></div>';SET.forEach(function(g){if(!!g[2]===setAdv)return;h+='<div class="card"><h3>'+g[0]+'</h3>';
+ if(g[0]==='Assessments')h+='<div class="muted">10% with neither done, 15% with one, 25% with both. Each one counts from the 1st of the month after you do it, for 12 months. Leave a date empty if you are not sure (it then always counts).</div>';if(g[0]==='Discovery Bank (Vitality Money)')h+='<div class="muted">Every reward is split in two: the <b>Vitality</b> part (from activating and doing your Vitality Age + Health Check) and the <b>Discovery Bank</b> part (extra on top from a qualifying Discovery Bank product with Vitality Money). The Bank % boxes below start at the most Discovery pays (HealthyFood 50%, HealthyCare 25%, HealthyBaby 25%, Fuel 15%). Your real Bank % depends on your Vitality Money status, card and monthly spend, so check it in the Discovery Bank app and type in your own number. The monthly cap applies to the combined reward.</div>';g[1].forEach(function(f){var v=gp(s,f[0]);
+ if(f[2]==='checkbox')h+='<label><input type="checkbox" data-k="'+f[0]+'"'+(v?' checked':'')+'> '+f[1]+'</label>';
+ else if(f[2]==='select')h+='<label>'+f[1]+'<select data-k="'+f[0]+'">'+f[3].map(function(o){var lab=o==='quick'?'Quick scan (faster)':o==='careful'?'Careful scan (slower, more accurate)':o;return'<option value="'+esc(o)+'"'+(o===v?' selected':'')+'>'+esc(lab)+'</option>'}).join('')+'</select></label>';
+ else h+='<label>'+f[1]+'<input data-k="'+f[0]+'" type="'+f[2]+'" '+(f[2]==='number'?'step="0.01"':'')+' value="'+esc(v)+'"></label>'});
+ if(g[0]==='HealthyFood rates')h+='<div class="muted">How it works: at your primary partner you get the activation % with no assessments, the ONE-assessment % with one, and the primary % with both. If the Discovery Bank boost is ticked, the boost % is added on top (primary only). Secondary partners always get the secondary %.</div>';
+ if(g[0]==='HealthyBaby rates')h+='<div class="muted">How it works: activation % until both assessments are ticked, then the after-assessments %, or the Discovery Bank % if the HealthyCare bank-card box is ticked. HealthyBaby has its own cap, separate from HealthyCare (per Discovery\'s HealthyBaby page).</div>';
+ if(g[0]==='HealthyCare rates')h+='<div class="muted">How it works: at your primary partner you get the activation % until both assessments are ticked. After that you get the primary %, or the Discovery Bank card % instead if that box is ticked (it is the total, not added on). The other partner always gets the secondary %. Only spend up to the monthly cap (single or family)  each month (in date order) earns.</div>';
+ if(g[0].indexOf('Slip scanning')===0)h+='<div class="hint">Quick scan (the default) does one faster read. Careful scan reads the slip several times and is more accurate. Fast scan (more memory) only changes how many readers run at once.</div>';if(g[0]==='Fuel rates')h+='<div class="hint">50% is the most Vitality Drive pays. Your real Drive % depends on your Vitality Drive status, so set it to match your status in the Discovery app.</div>';
+ h+='</div>'});if(!setAdv)return h+'<div class="card muted">Rates, caps, fuel, slip keywords, backup and checks are under <b>Advanced</b>.</div>';
+ h+='<div class="card"><h3>Backup</h3><button class="b" id="exp">Export JSON</button><button class="b" id="imp">Import JSON</button><input type="file" id="impf" accept=".json,application/json" style="display:none"><button class="s" id="rst">Reset rates to defaults</button></div>';
+ h+='<div class="card"><h3>Sources</h3><div class="muted">Defaults come from Discovery pages checked 1 Nov 2026. Discovery changes rules often, so check and edit any rate above. Not modelled: R200 minimum monthly spend per channel/partner, the Vitality-points limit on HealthyFood/HealthyBaby, per-member rates in a family, Drive status/plan tiers.</div><ul><li><a href="https://www.discovery.co.za/wcm/discoverycoza/assets/vitality/benefit-guides/healthy-living/healthyfood-benefit-guide.pdf" target="_blank" rel="noopener">[A] HealthyFood benefit guide</a></li><li><a href="https://discovery.co.za/portal/individual/improve-health-healthyfood" target="_blank" rel="noopener">[B] Up to 75% back on HealthyFood</a></li><li><a href="https://www.discovery.co.za/vitality/help-healthyfood-healthycare" target="_blank" rel="noopener">[C] HealthyFood and HealthyCare help</a></li><li><a href="https://www.discovery.co.za/vitality/vitality-benefit-updates-2" target="_blank" rel="noopener">[D] Vitality benefit updates 2026</a></li><li><a href="https://www.discovery.co.za/wcm/discoverycoza/assets/vitality/benefit-rules/vitality-healthycare-benefit-guide-vitality-only.pdf" target="_blank" rel="noopener">[E] HealthyCare benefit guide</a></li><li><a href="https://www.discovery.co.za/vitality/healthycare-rewards-for-vitality-active-members" target="_blank" rel="noopener">[G] HealthyCare for Vitality Active</a></li><li><a href="https://www.discovery.co.za/wcm/discoverycoza/assets/vitality/health-assessments/vhc-benefits-updates-for-2026.pdf" target="_blank" rel="noopener">[H] HealthyCare updates 2026</a></li><li><a href="https://www.discovery.co.za/vitality/healthy-baby" target="_blank" rel="noopener">[I] HealthyBaby</a></li><li><a href="https://www.discovery.co.za/wcm/discoverycoza/assets/vitality/terms-and-conditions/healthybaby-rewards.pdf" target="_blank" rel="noopener">[J] HealthyBaby terms</a></li><li><a href="https://www.discovery.co.za/corporate/new-product-updates" target="_blank" rel="noopener">[O] Discovery Insure product updates</a></li><li><a href="https://www.discovery.co.za/car-and-home-insurance/faq-vitality-drive" target="_blank" rel="noopener">[P] Vitality Drive FAQ</a></li><li><a href="https://www.discovery.co.za/assets/discoverycoza/vitality/vitality-drive-ts-cs.pdf" target="_blank" rel="noopener">[Q] Vitality Drive terms</a></li><li><a href="https://www.discovery.co.za/assets/discoverycoza/car-and-home-insurance/vitality-drive-one-pager.pdf" target="_blank" rel="noopener">[R] Vitality Drive one-pager</a></li><li><a href="https://www.discovery.co.za/car-and-home-insurance/fuel-rewards" target="_blank" rel="noopener">[S] Fuel cash back (old model)</a></li></ul></div>';h+='<div class="card"><h3>Check it works</h3><button class="b" id="chk">Run checks</button><div id="chkout"></div></div>';return h}
+function bindSettings(){document.getElementById('sbasic').onclick=function(){setAdv=false;render()};document.getElementById('sadv').onclick=function(){setAdv=true;render()};if(!document.getElementById('exp')){document.querySelectorAll('[data-k]').forEach(function(el){el.onchange=function(){var v=el.type==='checkbox'?el.checked:el.value;sp(DB.settings,el.dataset.k,v);save();if(el.dataset.k==='scan.fast'){__forcedSingle=false;killPool();}}});return}document.querySelectorAll('[data-k]').forEach(function(el){el.onchange=function(){var v=el.type==='checkbox'?el.checked:el.type==='number'?(el.value===''?'':num(el.value)):el.value;sp(DB.settings,el.dataset.k,v);save();if(el.dataset.k==='scan.fast'){__forcedSingle=false;killPool();}}});
+ document.getElementById('exp').onclick=function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));a.download='vitality-rewards-backup.json';a.click()};
+ document.getElementById('imp').onclick=function(){document.getElementById('impf').click()};
+ document.getElementById('impf').onchange=function(ev){var f=ev.target.files[0];if(!f)return;f.text().then(function(t){try{var d=JSON.parse(t);if(!confirm('Replace all current data with this backup?'))return;localStorage.setItem(KEY,JSON.stringify(d));DB=load();save();render();alert('Imported.')}catch(e){alert('That file is not a valid backup.')}})};
+ document.getElementById('rst').onclick=function(){if(confirm('Reset all rates and settings to defaults? Entries are kept.')){DB.settings=JSON.parse(JSON.stringify(DEFAULTS));save();render()}};
+ document.getElementById('chk').onclick=function(){var r=runChecks();document.getElementById('chkout').innerHTML=r.map(function(x){return'<div class="'+(x.pass?'ok':'bad')+'" style="margin:4px 0">'+(x.pass?'✅ ':'❌ ')+esc(x.name)+' (got '+x.got+')</div>'}).join('')+'<div class="muted">Checks use default rates with assessments done, so your own settings are not changed.</div>'}}
+
+var __tessOK=false;function A(p){return new URL('assets/'+p,location.href).href}
+function loadTess(){if(__tessOK)return Promise.resolve();return new Promise(function(ok,no){var sc=document.createElement('script');sc.src=A('tesseract.min.js');sc.onload=function(){__tessOK=true;ok()};sc.onerror=function(){no(new Error('bundle'))};document.head.appendChild(sc)})}
+// ---- Image preprocessing for phone photos of thermal slips ----
+function mkCanvas(w,h){var c=document.createElement('canvas');c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c}
+function grayOf(c){var d=c.getContext('2d').getImageData(0,0,c.width,c.height).data,g=new Float32Array(c.width*c.height);for(var i=0,j=0;i<d.length;i+=4,j++)g[j]=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];return g}
+function grayToCanvas(g,w,h){var c=mkCanvas(w,h),ctx=c.getContext('2d'),im=ctx.createImageData(w,h);for(var i=0,j=0;j<g.length;i+=4,j++){var v=g[j];im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255}ctx.putImageData(im,0,0);return c}
+function otsu(g){var hs=new Float64Array(256),n=g.length;for(var i=0;i<n;i++)hs[Math.max(0,Math.min(255,g[i]|0))]++;var sum=0;for(i=0;i<256;i++)sum+=i*hs[i];var sb=0,wb=0,best=0,t=128;
+ for(i=0;i<256;i++){wb+=hs[i];if(!wb)continue;var wf=n-wb;if(!wf)break;sb+=i*hs[i];var mb=sb/wb,mf=(sum-sb)/wf,v=wb*wf*(mb-mf)*(mb-mf);if(v>best){best=v;t=i}}return t}
+function sauvola(g,w,h,win,k){var W=w+1,S=new Float64Array(W*(h+1)),Q=new Float64Array(W*(h+1)),o=new Uint8ClampedArray(w*h),r=win>>1;
+ for(var y=0;y<h;y++){var rs=0,rq=0;for(var x=0;x<w;x++){var v=g[y*w+x];rs+=v;rq+=v*v;S[(y+1)*W+x+1]=S[y*W+x+1]+rs;Q[(y+1)*W+x+1]=Q[y*W+x+1]+rq}}
+ for(y=0;y<h;y++){var y0=Math.max(0,y-r),y1=Math.min(h,y+r+1);for(x=0;x<w;x++){var x0=Math.max(0,x-r),x1=Math.min(w,x+r+1),n=(y1-y0)*(x1-x0);
+  var s=S[y1*W+x1]-S[y0*W+x1]-S[y1*W+x0]+S[y0*W+x0],q=Q[y1*W+x1]-Q[y0*W+x1]-Q[y1*W+x0]+Q[y0*W+x0],m=s/n,sd=Math.sqrt(Math.max(0,q/n-m*m));
+  o[y*w+x]=g[y*w+x]<m*(1+k*(sd/128-1))?0:255}}return o}
+function rotateCanvas(c,deg){if(!deg)return c;var a=deg*Math.PI/180,cs=Math.abs(Math.cos(a)),sn=Math.abs(Math.sin(a)),w=c.width*cs+c.height*sn,h=c.width*sn+c.height*cs,o=mkCanvas(w,h),x=o.getContext('2d');
+ x.fillStyle='#fff';x.fillRect(0,0,o.width,o.height);x.translate(o.width/2,o.height/2);x.rotate(a);x.drawImage(c,-c.width/2,-c.height/2);return o}
+function skewAngle(c){var s=Math.min(1,700/Math.max(c.width,c.height)),sm=mkCanvas(c.width*s,c.height*s);sm.getContext('2d').drawImage(c,0,0,sm.width,sm.height);
+ var w=sm.width,h=sm.height,g=grayOf(sm),b=sauvola(g,w,h,(Math.round(w/20)|1),0.25),pts=[];
+ for(var y=2;y<h-2;y++)for(var x=2;x<w-2;x++)if(!b[y*w+x])pts.push(x,y);var step=Math.max(1,Math.floor(pts.length/2/25000))*2,best=-1,ba=0;
+ for(var a=-20;a<=20;a+=0.5){var r=a*Math.PI/180,sn=Math.sin(r),cs=Math.cos(r),bins=new Float64Array(h*2+w);for(var i=0;i<pts.length;i+=step){var yy=Math.round(-pts[i]*sn+pts[i+1]*cs)+w;if(yy>=0&&yy<bins.length)bins[yy]++}
+  var sc=0;for(i=1;i<bins.length;i++){var dd=bins[i]-bins[i-1];sc+=dd*dd}if(sc>best){best=sc;ba=a}}return ba}
+function autoCrop(c){var s=Math.min(1,500/Math.max(c.width,c.height)),sm=mkCanvas(c.width*s,c.height*s);sm.getContext('2d').drawImage(c,0,0,sm.width,sm.height);
+ var w=sm.width,h=sm.height,g=grayOf(sm),t=otsu(g),col=new Float64Array(w),row=new Float64Array(h);for(var y=0;y<h;y++)for(var x=0;x<w;x++)if(g[y*w+x]>t){col[x]++;row[y]++}
+ function span(a,n,f){var i0=0,i1=a.length-1;while(i0<a.length&&a[i0]<n*f)i0++;while(i1>0&&a[i1]<n*f)i1--;return[i0,i1]}
+ var cx=span(col,h,0.35),cy=span(row,w,0.25);if(cx[1]<=cx[0]||cy[1]<=cy[0])return c;var bw=(cx[1]-cx[0])/w,bh=(cy[1]-cy[0])/h;if(bw*bh<0.15||bw*bh>0.95)return c;
+ var p=0.02,x0=Math.max(0,(cx[0]/w-p))*c.width,y0=Math.max(0,(cy[0]/h-p))*c.height,x1=Math.min(1,cx[1]/w+p)*c.width,y1=Math.min(1,cy[1]/h+p)*c.height,o=mkCanvas(x1-x0,y1-y0);
+ o.getContext('2d').drawImage(c,x0,y0,x1-x0,y1-y0,0,0,o.width,o.height);return o}
+function scaleTo(c,longSide){var s=longSide/Math.max(c.width,c.height),o=mkCanvas(c.width*s,c.height*s),x=o.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(c,0,0,o.width,o.height);return o}
+function scaleToWidth(c,wTarget){if(!c.width||Math.abs(c.width-wTarget)<8)return c;var s=wTarget/c.width,o=mkCanvas(wTarget,c.height*s),x=o.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(c,0,0,o.width,o.height);return o}
+function enhance(c){var w=c.width,h=c.height,g=grayOf(c),hs=new Uint32Array(256);for(var i=0;i<g.length;i++)hs[g[i]|0]++;var lo=0,hi=255,acc=0;for(i=0;i<256;i++){acc+=hs[i];if(acc>g.length*0.02){lo=i;break}}acc=0;for(i=255;i>=0;i--){acc+=hs[i];if(acc>g.length*0.02){hi=i;break}}
+ var sp=Math.max(1,hi-lo);for(i=0;i<g.length;i++)g[i]=Math.max(0,Math.min(255,(g[i]-lo)*255/sp));
+ var sh=new Float32Array(g.length);for(var y=1;y<h-1;y++)for(var x=1;x<w-1;x++){var k=y*w+x;sh[k]=Math.max(0,Math.min(255,g[k]*1.8-0.2*(g[k-1]+g[k+1]+g[k-w]+g[k+w])))}
+ var b=sauvola(sh,w,h,(Math.round(Math.max(w,h)/30)|1),0.2),o=new Float32Array(b.length);for(i=0;i<b.length;i++)o[i]=b[i];return grayToCanvas(o,w,h)}
+function stretchOnly(c){var w=c.width,h=c.height,g=grayOf(c),hs=new Uint32Array(256);for(var i=0;i<g.length;i++)hs[g[i]|0]++;var lo=0,hi=255,acc=0;for(i=0;i<256;i++){acc+=hs[i];if(acc>g.length*0.01){lo=i;break}}acc=0;for(i=255;i>=0;i--){acc+=hs[i];if(acc>g.length*0.3){hi=i;break}}
+ var sp=Math.max(1,hi-lo);for(i=0;i<g.length;i++)g[i]=Math.max(0,Math.min(255,(g[i]-lo)*255/sp));return grayToCanvas(g,w,h)}
+function prepCanvases(bmp,opt){opt=opt||{};var c=mkCanvas(bmp.width,bmp.height);c.getContext('2d').drawImage(bmp,0,0);
+ if(opt.crop){var r=opt.crop,o=mkCanvas(c.width*r.w,c.height*r.h);o.getContext('2d').drawImage(c,c.width*r.x,c.height*r.y,o.width,o.height,0,0,o.width,o.height);c=o}
+ c=rotateCanvas(c,opt.rot||0);
+ if(opt.quick){c=autoCrop(c);if(c.width>1400)c=scaleToWidth(c,1400);else if(c.width<1200)c=scaleToWidth(c,1300);var qang=skewAngle(c);if(Math.abs(qang)>0.5){c=rotateCanvas(c,-qang);c=autoCrop(c);if(c.width>1400)c=scaleToWidth(c,1400)}return{orig:c,proc:stretchOnly(c),gray:c,angle:qang}}
+ c=scaleTo(c,2200);var orig=c,ang=skewAngle(c);var d=rotateCanvas(c,-ang);d=autoCrop(d);if(Math.max(d.width,d.height)<1800)d=scaleTo(d,2200);
+ return{orig:orig,proc:enhance(d),gray:d,angle:ang}}
+var __vrTest={hangSetup:false,hangRecognize:false,setupMs:45000,recogMs:90000,lastPoolSize:1};
+if(typeof window!=='undefined')window.__vrTest=__vrTest;
+var __pool=null,__poolWorkers=[],__spawned=[],__gen=0,__forcedSingle=false,__poolLogger=function(){};
+function withTimeout(p,ms,msg){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error(msg||'timeout'))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})})}
+function isMobile(){try{if(navigator.userAgentData&&navigator.userAgentData.mobile)return true}catch(e){}return /Android|iPhone|iPad|iPod|Mobile|Moto/i.test(navigator.userAgent||'')||((navigator.maxTouchPoints||0)>1&&Math.min(screen.width,screen.height)<700)}
+function poolSize(forceSingle){if(forceSingle||__forcedSingle){__vrTest.lastPoolSize=1;return 1}var fast=false;try{fast=!!(S().scan&&S().scan.fast)}catch(e){}
+ var mem=navigator.deviceMemory;if(!(mem>0))mem=4;var mobile=isMobile(),hc=navigator.hardwareConcurrency||2,n=1;
+ if(!fast&&(mem<=4||mobile))n=1;
+ else if(mobile||mem<=4)n=fast?2:1;
+ else{var cap=fast?3:2;n=Math.min(cap,Math.max(2,Math.floor(hc/2)||2));if(mem<3)n=1}
+ __vrTest.lastPoolSize=n;return n}
+function killPool(){__gen++;var ws=__poolWorkers.concat(__spawned);__poolWorkers=[];__spawned=[];__pool=null;ws.forEach(function(w){try{w.terminate()}catch(e){}})}
+function tessLogger(m){if(!m||!m.status)return;var s=String(m.status).toLowerCase();if(/language|traineddata|initializ/.test(s)&&/api|language|traineddata/.test(s))__poolLogger('language',m.progress||0);else if(/tesseract|core|loading/.test(s))__poolLogger('reader',m.progress||0)}
+function makeWorker(){return Tesseract.createWorker('eng',1,{workerPath:A('worker.min.js'),workerBlobURL:false,corePath:A('tesseract-core-lstm.wasm.js'),langPath:new URL('assets',location.href).href,gzip:true,cacheMethod:'none',logger:tessLogger,errorHandler:function(err){console.error(err)}}).then(function(w){return w.setParameters({tessedit_pageseg_mode:'6',preserve_interword_spaces:'1'}).then(function(){return w})})}
+function buildPool(n,onStatus){onStatus=onStatus||function(){};if(__vrTest.hangSetup)return withTimeout(new Promise(function(){}),__vrTest.setupMs,'setup-timeout');var gen=__gen;
+ return loadTess().then(function(){onStatus('reader',1);var Orig=window.Worker;window.Worker=function(a,b){var w=new Orig(a,b);__spawned.push(w);return w};window.Worker.prototype=Orig.prototype;
+  var jobs=[];for(var i=0;i<n;i++)jobs.push(withTimeout(makeWorker(),__vrTest.setupMs,'setup-timeout').then(function(w){if(gen!==__gen){try{w.terminate()}catch(e){}throw new Error('cancelled')}__poolWorkers.push(w);return w}));
+  return Promise.all(jobs).finally(function(){window.Worker=Orig})}).then(function(ws){if(gen!==__gen){ws.forEach(function(w){try{w.terminate()}catch(e){}});throw new Error('cancelled')}
+  var free=ws.slice(),q=[];
+  function run(img){return new Promise(function(ok,no){q.push([img,ok,no]);pump()})}
+  function recognizeSafe(w,img){if(__vrTest.hangRecognize)return withTimeout(new Promise(function(){}),__vrTest.recogMs,'read-timeout');return withTimeout(w.recognize(img),__vrTest.recogMs,'read-timeout')}
+  function pump(){while(free.length&&q.length){(function(w,j){recognizeSafe(w,j[0]).then(function(r){free.push(w);j[1](r);pump()},function(e){j[2](e)})})(free.shift(),q.shift())}}
+  return{n:ws.length,run:run,workers:ws}})}
+function getPool(onStatus){if(onStatus)__poolLogger=onStatus;if(__pool)return __pool;var n=poolSize();__pool=withTimeout(buildPool(n,function(ph,p){__poolLogger(ph,p)}),__vrTest.setupMs,'setup-timeout');var mine=__pool;__pool.catch(function(){if(__pool===mine)__pool=null});return __pool}
+function getWorker(){return getPool()}
+function prewarmReader(){try{getPool().catch(function(){})}catch(e){}}
+function openPool(onStatus,forceSingle){if(forceSingle){__forcedSingle=true;killPool()}return getPool(onStatus)}
+
+function scoreP(p){var s=p.priceLines+(p.store?2:0)+(p.markerFound?2:0),sum=p.items.reduce(function(t,i){return t+i.price},0);if(p.tillTotalFound)s+=2;if(p.tillTotalFound&&Math.abs(sum-p.tillTotal)<0.05)s+=10;return s}
+function cropToText(src,res){var W=(res.data&&res.data.words)||[],pw=W.filter(function(w){return /^R?\d{1,4}[.,]\d{2}$/.test(w.text.replace(/[^\dR.,]/g,''))&&w.text.length<=10});if(pw.length<4)return null;
+ var cw=pw.map(function(w){return (w.bbox.x1-w.bbox.x0)/Math.max(4,w.text.length)}).sort(function(a,b){return a-b})[Math.floor(pw.length/2)],
+  x1s=pw.map(function(w){return w.bbox.x1}).sort(function(a,b){return a-b}),xr=x1s[Math.floor(x1s.length*0.75)];
+ var col=pw.filter(function(w){return Math.abs(w.bbox.x1-xr)<cw*4});if(col.length<3)col=pw;
+ var ys=col.map(function(w){return w.bbox.y0}).sort(function(a,b){return a-b}),y0=ys[0],y1=Math.max.apply(null,col.map(function(w){return w.bbox.y1})),H=y1-y0;
+ var x0=Math.max(0,xr-48*cw),x1=Math.min(src.width,xr+3*cw);y0=Math.max(0,y0-Math.max(H*0.2,cw*14));y1=Math.min(src.height,y1+Math.max(H*0.2,cw*14));
+ var o=mkCanvas(x1-x0,y1-y0);o.getContext('2d').drawImage(src,x0,y0,x1-x0,y1-y0,0,0,o.width,o.height);var s=Math.min(3,Math.max(0.4,30/cw));if(o.height*s>7000)s=7000/o.height;return {c:scaleTo(o,Math.max(o.width,o.height)*s),cw:cw,s:s}}
+function stripsOf(c,n,mode){var h=c.height,w=c.width,g=grayOf(enhance(c)),rows=new Float32Array(h);for(var y=0;y<h;y++){var t=0;for(var x=0;x<w;x+=2)if(g[y*w+x]<128)t++;rows[y]=t}
+ var cuts=[0];for(var k=1;k<n;k++){var c0=Math.floor(h*k/n),r=Math.floor(h/(n*6)),bi=c0,bv=1e9;for(y=Math.max(1,c0-r);y<Math.min(h-1,c0+r);y++){if(rows[y]<bv){bv=rows[y];bi=y}}cuts.push(bi)}cuts.push(h);
+ var out=[];for(k=0;k<n;k++){var o=mkCanvas(w,cuts[k+1]-cuts[k]);o.getContext('2d').drawImage(c,0,cuts[k],w,o.height,0,0,w,o.height);var a=skewAngle(o);var rr=Math.abs(a)>0.4?rotateCanvas(o,-a):o;out.push(mode==="stretch"?stretchOnly(rr):enhance(rr))}return out}
+function scanMode(){var m='';try{m=S().scan&&S().scan.mode}catch(e){}if(m==='careful'||m==='Careful scan')return 'careful';if(m==='quick'||m==='Quick scan')return 'quick';return isMobile()?'quick':'careful'}
+function scanImage(blob,kind,opt,progress){kind=kind||'hf';opt=opt||{};var quick=!!opt.quick;var kws=S().scan[kind];progress=progress||function(){};var T0=Date.now();
+ return createImageBitmap(blob,{imageOrientation:'from-image'}).catch(function(){return createImageBitmap(blob)}).then(function(bmp){var P=prepCanvases(bmp,opt),runs=[],done=0,total=quick?1:4;
+  function tick(){done++;var pct=Math.min(99,Math.max(12,Math.round(done/total*100))),el=(Date.now()-T0)/1000,left=done?Math.round(el/done*(total-done)):null;progress(pct,left,'reading')}
+  function take(text,variant,w){var p=parseSlip(text,kws);p.w=w||1;p.score=scoreP(p);p.variant=variant;p.raw=text;runs.push(p);return p}
+  function rec(pool,img){return pool.run(img).then(function(r){tick();return r})}
+  function strips(pool,c,n,name){var st=stripsOf(c,n,'stretch');return Promise.all(st.map(function(im){return pool.run(im)})).then(function(rs){tick();return take(rs.map(function(r){return r.data.text}).join('\n'),name,1.5)})}
+  function onSetup(ph,pf){if(ph==='reader')progress(2+Math.round((pf||0)*3),null,'reader');else if(ph==='language')progress(5+Math.round((pf||0)*4),null,'language');else if(ph==='retry')progress(4,null,'retry')}
+  function start(pool){progress(10,null,'reading');
+   if(quick)return rec(pool,P.proc).then(function(r1){take(r1.data.text,'quick')});
+   return rec(pool,P.proc).then(function(r1){var f=take(r1.data.text,'full');var cc=cropToText(P.gray,r1);
+   if(!cc){total=3;return Promise.all([rec(pool,P.orig).then(function(r){take(r.data.text,'orig')}),strips(pool,P.gray,4,'strips')])}
+   var c=cc.c;total=6;
+   return Promise.all([rec(pool,enhance(c)).then(function(r){return take(r.data.text,'crop-bin')}),rec(pool,c).then(function(r){return take(r.data.text,'crop-gray')})]).then(function(ps){
+    total=6;
+    return Promise.all([strips(pool,c,3,'strips3'),strips(pool,c,5,'strips5')])})})}
+  function attempt(forceSingle){if(forceSingle)onSetup('retry',0);return openPool(onSetup,forceSingle).then(start)}
+  return attempt(false).catch(function(err){killPool();return attempt(true)})
+  .then(function(){var m;if(quick&&runs.length===1){m=runs[0];var sum0=Math.round(m.items.reduce(function(t,i){return t+i.price},0)*100)/100;m.sumMatchesTotal=!!(m.tillTotalFound&&Math.abs(sum0-(m.tillTotal||0))<0.005)}else{runs.sort(function(a,b){return b.score-a.score});m=mergeParses(runs);m.raw=runs.map(function(r){return '=== '+r.variant+' ===\n'+r.raw}).join('\n')}
+   m.quick=quick;m.raw=m.raw||(runs[0]&&runs[0].raw)||'';m.angle=P.angle;m.secs=Math.round((Date.now()-T0)/100)/10;
+   var kw=String(kws||'').toLowerCase().split(',').map(function(k){return k.trim()}).filter(Boolean);if(!m.markerFound)m.items.forEach(function(it){it.guess=kw.some(function(k){return it.name.toLowerCase().indexOf(k)>=0});it.qualifies=it.guess});
+   try{__vrTest.lastScan={items:m.items.length,till:m.tillTotal,sum:Math.round(m.items.reduce(function(t,i){return t+i.price},0)*100)/100,q:m.qualifyingSum,secs:m.secs,quick:quick,sumMatches:!!m.sumMatchesTotal,store:m.store||''}}catch(e){}
+   return m})})}
+var scanState=null;
+function scanBtn(kind){return '<div class="card"><button class="b" id="scanbtn">📷 Scan slip</button><input type="file" id="scanf" accept="image/*" capture="environment" style="display:none"><div class="muted">Take a photo or upload a till slip. Only ticked items count. Works offline after the app has been opened once online.</div><div id="scanmsg"></div><details style="margin-top:6px"><summary class="muted">No photo? Paste slip text instead</summary><textarea id="scantxt" rows="5" style="width:100%"></textarea><button class="s" id="scantxtgo">Read text</button></details></div>'}
+function bindScan(kind){var b=document.getElementById('scanbtn');if(!b)return;var f=document.getElementById('scanf'),msg=document.getElementById('scanmsg');b.onclick=function(){f.click()};
+ document.getElementById('scantxtgo').onclick=function(){openReview(kind,parseSlip(document.getElementById('scantxt').value,S().scan[kind]))};
+ f.onchange=function(){var file=f.files[0];f.value='';if(!file)return;prepStep(kind,file,msg)}}
+function prepStep(kind,file,msg){prewarmReader();createImageBitmap(file,{imageOrientation:'from-image'}).catch(function(){return createImageBitmap(file)}).then(function(bmp){
+ var st={rot:0,x:0,y:0,x2:100,y2:100};
+ msg.innerHTML='<div class="card"><b>Line up the slip</b><div class="muted">Turn the photo so the text reads left to right, then trim off the background. Keep all the item lines and the TOTAL inside.</div><canvas id="pv" style="max-width:100%;max-height:60vh;display:block;margin:8px auto;border:1px solid #ccc"></canvas>'+
+  '<div><button class="s" id="rl">⟲ Turn left</button><button class="s" id="rr">⟳ Turn right</button></div>'+
+  ['x:Trim left','x2:Trim right','y:Trim top','y2:Trim bottom'].map(function(t){t=t.split(':');return '<label>'+t[1]+'<input type="range" min="0" max="100" value="'+st[t[0]]+'" data-cr="'+t[0]+'"></label>'}).join('')+
+  '<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><button class="b" id="go">Read slip</button><button class="s" id="gocareful">Careful scan (slower, more accurate)</button><button class="s" id="cx">Cancel</button></div><div class="hint" id="scanmodehint"></div><div id="scanprog"></div></div>';
+ function draw(){var pv=document.getElementById('pv');if(!pv)return;var rc=rotateCanvas((function(){var c=mkCanvas(bmp.width,bmp.height);c.getContext('2d').drawImage(bmp,0,0);return scaleTo(c,900)})(),st.rot);pv.width=rc.width;pv.height=rc.height;var x=pv.getContext('2d');x.drawImage(rc,0,0);
+  x.fillStyle='rgba(0,0,0,.45)';var W=rc.width,H=rc.height,l=W*st.x/100,r=W*st.x2/100,t=H*st.y/100,bo=H*st.y2/100;x.fillRect(0,0,W,t);x.fillRect(0,bo,W,H-bo);x.fillRect(0,t,l,bo-t);x.fillRect(r,t,W-r,bo-t);x.strokeStyle='#0a0';x.lineWidth=3;x.strokeRect(l,t,r-l,bo-t)}
+ draw();document.getElementById('rl').onclick=function(){st.rot=(st.rot+270)%360;draw()};document.getElementById('rr').onclick=function(){st.rot=(st.rot+90)%360;draw()};
+ msg.querySelectorAll('[data-cr]').forEach(function(i){i.oninput=function(){st[i.dataset.cr]=+i.value;if(st.x2-st.x<10||st.y2-st.y<10){st[i.dataset.cr]=i.dataset.cr.length>1?Math.max(+i.value,(i.dataset.cr==='x2'?st.x:st.y)+10):Math.min(+i.value,(i.dataset.cr==='x'?st.x2:st.y2)-10);i.value=st[i.dataset.cr]}draw()}});
+ document.getElementById('cx').onclick=function(){msg.innerHTML=''};
+ (function(){var hint=document.getElementById('scanmodehint');if(hint)hint.textContent=scanMode()==='quick'?'Quick scan is on (one faster read). Use Careful scan if prices look wrong.':'Careful scan is the default. You can still use Read slip, or change this in Settings.';})();
+ function beginScan(quick){
+  var full=mkCanvas(bmp.width,bmp.height);full.getContext('2d').drawImage(bmp,0,0);var rc=rotateCanvas(full,st.rot),cx=rc.width*st.x/100,cy=rc.height*st.y/100,cw=rc.width*(st.x2-st.x)/100,ch=rc.height*(st.y2-st.y)/100,o=mkCanvas(cw,ch);o.getContext('2d').drawImage(rc,cx,cy,cw,ch,0,0,cw,ch);
+  var pg=document.getElementById('scanprog');pg.innerHTML='<div class="ok">Loading the reader…</div>';
+  ['go','gocareful'].forEach(function(id){var b=document.getElementById(id);if(b)b.disabled=true});
+  function progHtml(p,left,phase){if(phase==='reader')return '<div class="ok">Loading the reader…</div>';if(phase==='language')return '<div class="ok">Loading the language…'+(p?(' '+p+'%'):'')+'</div>';if(phase==='retry')return '<div class="ok">Restarting with a single reader…</div>';return '<div class="ok">Reading your slip… '+p+'%'+(left!=null?' <span class="muted">(about '+Math.max(1,left)+'s left)</span>':'')+'</div>'}
+  function enableBtns(){['go','gocareful'].forEach(function(id){var b=document.getElementById(id);if(b)b.disabled=false})}
+  function showFail(e,retryFn){enableBtns();
+   var friendly=e&&e.message==='bundle'?'The slip reader could not load. Open the app once while online so it can save the reader for offline use.':(e&&(e.message==='setup-timeout'||e.message==='read-timeout')?'The slip reader took too long and was stopped, so it does not stay stuck.':'The slip reader could not finish'+(e&&e.message?(' ('+esc(e.message)+')'):'')+'.');
+   pg.innerHTML='<div class="bad">'+friendly+' You can try again, or use <b>Paste slip text</b> below.</div><button class="b" type="button" id="scanretry">Retry</button>';
+   var rb=document.getElementById('scanretry');if(rb)rb.onclick=retryFn}
+  function startScan(bl){pg.innerHTML=progHtml(0,null,'reader');['go','gocareful'].forEach(function(id){var b=document.getElementById(id);if(b)b.disabled=true});
+   scanImage(bl,kind,{quick:quick},function(p,left,phase){pg.innerHTML=progHtml(p,left,phase)})
+    .then(function(m){msg.innerHTML='';openReview(kind,m,m.raw,bl)})
+    .catch(function(e){killPool();showFail(e,function(){startScan(bl)})})}
+  o.toBlob(function(bl){startScan(bl)},'image/png')}
+ document.getElementById('go').onclick=function(){beginScan(scanMode()!=='careful')};
+ document.getElementById('gocareful').onclick=function(){beginScan(false)}})
+ .catch(function(e){msg.innerHTML='<div class="bad">Could not open that photo: '+esc(e.message)+'</div>'})}
+function openReview(kind,p,raw,blob){scanState={kind:kind,p:p,raw:raw,blob:blob||(scanState&&scanState.blob)||null};renderReview()}
+function renderReview(){var st=scanState,p=st.p,k=st.kind,opts=FORMS[k].filter(function(f){return f[0]==='shop'||f[0]==='partner'})[0];
+ var q=Math.round(p.items.filter(function(i){return i.qualifies}).reduce(function(t,i){return t+i.price},0)*100)/100;
+ var h='<div class="card"><h2>Check your slip</h2>'+(p.markerFound?'<div class="ok">Found Vitality markers (VIT / V) on the slip. Items with a marker are ticked.</div>':'<div class="warn">No Vitality markers found. Ticks below are <b>guesses</b> from the keyword list in Settings. Please check each item.</div>');
+ if(!p.items.length)h+='<div class="bad">No item lines could be read. Type the qualifying amount below, or try a flatter, brighter photo.</div>';
+ h+='<label>Shop<select id="rv_shop">'+opts[3].map(function(o){return'<option'+(o===p.store?' selected':'')+'>'+esc(o)+'</option>'}).join('')+'</select></label>'+(p.store?'':'<div class="muted">Store not recognised, please pick it.</div>');
+ h+='<label>Date<input type="date" id="rv_date" value="'+esc(p.date||today())+'"></label><table style="width:100%;border-collapse:collapse">';
+ p.items.forEach(function(it,i){h+='<tr style="border-bottom:1px solid #eee"><td><input type="checkbox" data-it="'+i+'"'+(it.qualifies?' checked':'')+'></td><td>'+esc(it.name)+(it.marker?' <span class="tag p">VIT</span>':it.guess?' <span class="tag">guess</span>':'')+'</td><td style="text-align:right"><input type="number" step="0.01" data-pr="'+i+'" value="'+it.price.toFixed(2)+'" style="width:90px;text-align:right"></td></tr>'});
+ h+='</table><label>Total till amount (R)<input type="number" step="0.01" id="rv_till" value="'+(p.tillTotal||0)+'"></label>';
+ var sm=Math.round(p.items.reduce(function(t,i){return t+i.price},0)*100)/100;var matched=p.items.length&&p.tillTotalFound&&Math.abs(sm-p.tillTotal)<0.005;if(matched)h+='<div class="ok">Items add up to the slip TOTAL ('+R(p.tillTotal)+'), so the prices read cleanly.</div>';else if(p.quick)h+='<div class="warn">Some prices may be off. Check the ticked items or try Careful scan.</div>'+(st.blob?'<button class="s" type="button" id="rv_careful">Try Careful scan</button>':'');else if(p.items.length&&p.tillTotalFound)h+='<div class="warn">Items add up to '+R(sm)+' but the slip TOTAL reads '+R(p.tillTotal)+'. Some prices may be misread or missing; please check them against the slip.</div>';
+ if(p.autoFix)h+='<div class="muted">Auto-corrected one price so the items match the TOTAL ('+esc(p.autoFix)+').</div>';
+ h+='<div class="card"><div class="muted">Qualifying amount (ticked items)</div><div class="big" id="rv_q">'+R(q)+'</div><label>Or type the qualifying amount yourself (R)<input type="number" step="0.01" id="rv_manual" placeholder="leave empty to use the ticked items"></label>'+(p.vitalityTotal!=null?'<div>Slip shows a Vitality total of <b>'+R(p.vitalityTotal)+'</b>. <label><input type="checkbox" id="rv_usevt" checked> Use the slip\'s Vitality total</label></div>':'')+'</div>';
+ h+='<button class="b" id="rv_ok">Confirm and save</button><button class="s" id="rv_no">Cancel</button>'+(st.raw?'<details><summary class="muted">Raw text read</summary><pre style="white-space:pre-wrap;font-size:12px">'+esc(st.raw)+'</pre></details>':'')+'</div>';
+ document.getElementById('app').innerHTML=h;
+ document.querySelectorAll('[data-it]').forEach(function(c){c.onchange=function(){p.items[c.dataset.it].qualifies=c.checked;var u=document.getElementById('rv_usevt');if(u)u.checked=false;renderReviewKeep()}});
+ document.querySelectorAll('[data-pr]').forEach(function(c){c.onchange=function(){p.items[c.dataset.pr].price=parseFloat(c.value)||0;renderReviewKeep()}});
+ document.getElementById('rv_no').onclick=function(){scanState=null;render()};if(document.getElementById('rv_careful'))document.getElementById('rv_careful').onclick=function(){var bl=st.blob;document.getElementById('app').innerHTML='<div class="card"><div id="scanprog" class="ok">Starting Careful scan…</div></div>';scanImage(bl,k,{quick:false},function(p,left,phase){var el=document.getElementById('scanprog');if(el)el.textContent=phase==='reader'?'Loading the reader…':phase==='language'?'Loading the language…':'Reading your slip… '+p+'%'}).then(function(m){openReview(k,m,m.raw,bl)}).catch(function(e){document.getElementById('app').innerHTML='<div class="bad">Careful scan could not finish. '+esc(e&&e.message||'')+'</div><button class="s" id="rv_back">Back</button>';document.getElementById('rv_back').onclick=function(){renderReview()}})};
+ document.getElementById('rv_ok').onclick=function(){var u=document.getElementById('rv_usevt'),mv=parseFloat(document.getElementById('rv_manual').value),qq=mv>=0?mv:u&&u.checked?p.vitalityTotal:Math.round(p.items.filter(function(i){return i.qualifies}).reduce(function(t,i){return t+i.price},0)*100)/100;
+  var shop=document.getElementById('rv_shop').value,e={id:uid(),date:document.getElementById('rv_date').value,till:document.getElementById('rv_till').value,scanned:true,
+   items:p.items.filter(function(i){return i.qualifies}).map(function(i){return{name:i.name,price:i.price}})};
+  if(k==='hf'){e.shop=shop;e.channel=hfChannel(shop);e.qualifying=qq}else if(k==='hc'){e.partner=shop;e.qualifying=qq}else{e.partner=shop;e.amount=qq;e.note='Scanned slip'}
+  DB[k].push(e);save();scanState=null;render()}}
+function renderReviewKeep(){var y=scrollY,d=document.getElementById('rv_date').value,t=document.getElementById('rv_till').value,s=document.getElementById('rv_shop').value;var mv=document.getElementById('rv_manual').value;renderReview();document.getElementById('rv_manual').value=mv;document.getElementById('rv_date').value=d;document.getElementById('rv_till').value=t;document.getElementById('rv_shop').value=s;scrollTo(0,y)}
+var TABI={'HealthyFood':['🥦','Food'],'HealthyCare':['💊','Care'],'HealthyBaby':['🍼','Baby'],'Fuel':['⛽','Fuel'],'Monthly Totals':['📊','Totals'],'Settings':['⚙️','Settings']};
+function render(){if(scanState)return renderReview();document.getElementById('tabs').innerHTML=TABS.map(function(t){return'<button data-t="'+t+'" class="'+(t===tab?'on':'')+'" aria-label="'+t+'"><span class="ic">'+TABI[t][0]+'</span>'+TABI[t][1]+'</button>'}).join('');
+ document.querySelectorAll('#tabs button').forEach(function(b){b.onclick=function(){tab=b.dataset.t;editing=null;render();scrollTo(0,0)}});
+ var map={'HealthyFood':['hf',viewHF],'HealthyCare':['hc',viewHC],'HealthyBaby':['hb',viewHB],'Fuel':['fuel',viewFuel],'Monthly Totals':[null,viewTotals],'Settings':[null,viewSettings]}[tab];
+ document.getElementById('app').innerHTML=(['hf','hc','hb'].indexOf(map[0])>=0?scanBtn(map[0]):'')+map[1]();bindScan(map[0]);if(map[0])bindForm(map[0]);if(tab==='Settings'){}if(tab==='Settings')bindSettings();bindActs()}
+render();
+</script><script>if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js')</script></body></html>
