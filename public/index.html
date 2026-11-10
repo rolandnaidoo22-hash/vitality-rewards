@@ -7,7 +7,7 @@ nav{display:flex;overflow-x:auto;background:#fff;border-bottom:1px solid #ddd;po
 nav button{flex:none;border:0;background:none;padding:12px 14px;font-size:15px;cursor:pointer;border-bottom:3px solid transparent}
 nav button.on{border-color:#e4002b;font-weight:700}
 main{max-width:760px;margin:auto;padding:12px 12px 90px}
-nav#tabs{position:fixed;bottom:0;left:0;right:0;top:auto;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid #ddd;border-bottom:0;padding-bottom:env(safe-area-inset-bottom);overflow:visible}
+nav#tabs{position:fixed;bottom:0;left:0;right:0;top:auto;display:grid;grid-template-columns:repeat(7,1fr);border-top:1px solid #ddd;border-bottom:0;padding-bottom:env(safe-area-inset-bottom);overflow:visible}
 nav#tabs button{min-height:58px;padding:4px 0;font-size:11px;border-bottom:0;border-top:3px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#445}
 nav#tabs button .ic{font-size:20px;line-height:24px}nav#tabs button.on{border-top-color:#e4002b;color:#e4002b}
 header{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;z-index:3}.mon{margin:0;color:#fff;font-size:13px;display:flex;align-items:center;gap:6px}.mon input{width:auto;min-height:44px;padding:6px}
@@ -31,6 +31,19 @@ button.s{background:#eef;color:#223;border:0;border-radius:8px;padding:6px 10px;
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;font-size:14px}.grid b{display:block;font-size:17px}
 .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:12px;background:#dde}.tag.p{background:#d4f0dc}
 h2{margin:6px 0}h3{margin:8px 0 4px}
+.gbseg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:2px 0 6px}.gbseg button{border:1px solid #d9cfe9;background:#fff;border-radius:10px;font-size:14px;color:#3b2a5c}.gbseg button.on{background:#6b3fa0;color:#fff;border-color:#6b3fa0}
+.gbc{border-top:4px solid #d4a017}.gbtiles{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.gbtiles button{border:2px solid #c0c4cc;background:linear-gradient(#fafafa,#e9ebef);border-radius:12px;display:flex;flex-direction:column;align-items:center;font-size:15px;padding:4px}.gbtiles button small{font-size:11px;color:#556}.gbtiles button.on{border-color:#d4a017;background:linear-gradient(#fff6d6,#f3d77a)}
+.gbgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.gbgrid button{min-height:52px;border:1px solid #d9cfe9;background:#f7f4fc;border-radius:10px;font-size:22px}.gbgrid button i{font-size:11px;color:#a99bc4;font-style:normal}.gbgrid button.on{background:#6b3fa0;border-color:#6b3fa0;box-shadow:0 0 0 3px #d4a017}
+button.s.gbnone{width:100%;margin:0}button.s.gbnone.on{background:#6b3fa0;color:#fff}.gbgo{width:100%;margin-top:8px;background:#6b3fa0!important}
+.gbrow{display:flex;justify-content:space-between;align-items:center;gap:6px;border-top:1px solid #eee;padding:6px 0}.gbrow>div:last-child{display:flex;flex-wrap:wrap;justify-content:flex-end}
+.gbheat{display:grid;grid-template-columns:repeat(4,1fr) 58px;gap:4px}.gbheat>div{border-radius:8px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:15px}.gbheat small{font-size:9px;opacity:.8}.gbpct{font-size:11px!important;color:#556;background:#f1f2f4}.gbpct b{font-size:14px;color:#3b2a5c}
+.gbstreak{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}.gbstreak>div{background:linear-gradient(#fafafa,#eceef2);border:1px solid #c0c4cc;border-radius:12px;text-align:center;padding:6px}.gbstreak span{font-size:22px;display:block}.gbstreak b{display:block;font-size:20px;color:#6b3fa0}.gbstreak small{display:block;font-size:11px;color:#556}
+.gbguess .gbhead{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#6b3fa0,#8d5cc4);color:#fff;border-radius:12px;padding:8px 12px}.gbhead b{font-size:18px}.gbconf{font-size:12px;background:#d4a017;color:#2b2100;border-radius:10px;padding:3px 8px}
+.gbpc{display:grid;grid-template-columns:64px 92px 1fr;align-items:center;gap:10px;padding:8px 10px;margin:6px 0}.gbpt{text-align:center;font-size:26px}.gbpt b{display:block;font-size:13px}
+.gbmini{display:grid;grid-template-columns:repeat(4,20px);gap:3px}.gbmini i{height:20px;border-radius:4px;background:#efeaf7;font-style:normal;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.gbmini i.g{background:#d4a017;color:#2b2100}.gbmini i.s{background:#c0c4cc;color:#222}
+.gbpc ol{margin:0;padding:0;list-style:none}.gbpc li{border-radius:8px;padding:3px 8px;margin:3px 0;font-size:14px}.gbpc li.g{background:linear-gradient(#fff3c4,#f0cd5b)}.gbpc li.s{background:linear-gradient(#f7f7f8,#dfe1e5)}
+.gbdisc{background:#f3eefa;border-left:5px solid #6b3fa0;border-radius:8px;padding:8px 10px;font-size:13px;color:#3b2a5c}
+textarea{width:100%;font-size:15px;padding:8px;border:1px solid #ccc;border-radius:8px;font-family:ui-monospace,monospace}.gbprev{max-height:300px;overflow:auto;font-size:13px;margin:6px 0}.gbprev>div{padding:4px 6px;border-bottom:1px solid #eee}.gbprev>div.bad{background:#fde7e9}.gbprev span{display:inline-block;min-width:26px;color:#889}
 </style></head><body>
 <header><h1>Vitality Rewards</h1><label class="mon">Month <input type="month" id="month"></label></header>
 <nav id="tabs"></nav><main id="app"></main>
@@ -154,7 +167,7 @@ function mergeParses(ps){ps=ps.filter(Boolean);ps.forEach(function(p){p.items.fo
  items.forEach(function(it){it.qualifies=out.markerFound?it.marker:it.guess});
  if(tot!=null){out.tillTotal=tot;out.tillTotalFound=true}out.sumMatchesTotal=tot!=null&&Math.abs(sum()-tot)<0.005;out.autoFix=fixed;
  out.qualifyingSum=r2(items.filter(function(i){return i.qualifies}).reduce(function(t,i){return t+i.price},0));return out}
-var DEFAULTS={milesPerRand:10,membership:'single',assess:{ageDone:false,ageDate:'',checkDone:false,checkDate:''},bank:{hfBoostOn:false,hcCardOn:false,hbCardOn:false,fuelBankOn:true},
+var DEFAULTS={milesPerRand:10,gb:{smooth:1},membership:'single',assess:{ageDone:false,ageDate:'',checkDone:false,checkDate:''},bank:{hfBoostOn:false,hcCardOn:false,hbCardOn:false,fuelBankOn:true},
  hf:{primaryInstore:'Checkers',primaryOnline:'Checkers Sixty60',activationPct:10,onePct:15,primaryPct:25,secondaryPct:10,boostPct:50,capSingle:2500,capFamily:5000},
  hc:{primary:'Clicks',activationPct:10,onePct:15,primaryPct:25,bankPct:25,secondaryPct:10,secondaryBankPct:0,capSingle:2000,capFamily:4000},
  hb:{activationPct:10,onePct:15,primaryPct:25,bankPct:25,capSingle:2000,capFamily:4000},
@@ -199,15 +212,57 @@ function runChecks(){var s=JSON.parse(JSON.stringify(DEFAULTS));s.assess.ageDone
  t('Each entry uses its own date (same month list)',sum(calcHCMonth([{date:'2026-05-31',partner:'Clicks',qualifying:100},{date:'2026-06-01',partner:'Clicks',qualifying:100}],sd),'reward'),40);
  t('Checkers is always in-store (primary even if saved as online)',calcHFMonth([{date:'2026-11-01',shop:'Checkers',channel:'online',qualifying:1000}],s)[0].reward,250);
  t('Sixty60 is always online (primary online)',calcHFMonth([{date:'2026-11-01',shop:'Checkers Sixty60',channel:'instore',qualifying:1000}],s)[0].reward,250);
+ out=out.concat(typeof gbChecks==='function'?gbChecks():[]);
  return out}
-if(typeof module!=='undefined')module.exports={parseSlip:parseSlip,mergeParses:mergeParses,calcHFMonth:calcHFMonth,calcHCMonth:calcHCMonth,calcHBMonth:calcHBMonth,calcFuelMonth:calcFuelMonth,runChecks:runChecks,assessWindow:assessWindow,DEFAULTS:DEFAULTS};
+// ---- Gameboard (fun only) ----
+var GB_T=['fuel','basket','runner'],GB_R=5,GB_C=4;
+function gbParseCell(s){s=String(s==null?'':s).trim().toLowerCase().replace(/["']/g,'');if(/^(none|-|—|n\/?a|not present|x|0|)$/.test(s))return'none';
+ var m=/^r?\s*(\d+)\s*(?:c|,|;|\/|x|\s|-|:)\s*(\d+)$/.exec(s)||/^r(\d+)c(\d+)$/.exec(s);if(!m)return null;var r=+m[1],c=+m[2];if(r<1||r>GB_R||c<1||c>GB_C)return null;return'R'+r+'C'+c}
+function gbParseDate(s){s=String(s||'').trim();var m=/^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s),y,mo,d;if(m){y=+m[1];mo=+m[2];d=+m[3]}else{m=/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/.exec(s);if(!m)return null;d=+m[1];mo=+m[2];y=+m[3]}
+ var dt=new Date(Date.UTC(y,mo-1,d));if(dt.getUTCMonth()!==mo-1||dt.getUTCDate()!==d)return null;return dt.toISOString().slice(0,10)}
+function gbWed(iso){var d=new Date(iso+'T00:00:00Z');var back=(d.getUTCDay()-3+7)%7;d.setUTCDate(d.getUTCDate()-back);return d.toISOString().slice(0,10)}
+function gbIdx(cell){var m=/^R(\d)C(\d)$/.exec(cell||'');return m?(+m[1]-1)*GB_C+(+m[2]-1):-1}
+function gbCellName(i){return'R'+(Math.floor(i/GB_C)+1)+'C'+(i%GB_C+1)}
+function gbCounts(boards,t){var c=new Array(GB_R*GB_C).fill(0),n=0;boards.forEach(function(b){var i=gbIdx(b[t]);if(i>=0){c[i]++;n++}});return{c:c,n:n}}
+// Laplace: (count + a) / (present + 20a)
+function gbProbs(boards,t,a){a=Math.max(0,+a||0);var k=gbCounts(boards,t),den=k.n+GB_R*GB_C*a;return k.c.map(function(x){return den>0?(x+a)/den:1/(GB_R*GB_C)})}
+function gbTop3(boards,t,a){var p=gbProbs(boards,t,a);return p.map(function(v,i){return{cell:gbCellName(i),i:i,p:v}}).sort(function(x,y){return y.p-x.p||x.i-y.i}).slice(0,3)}
+function gbRowCol(boards,t){var k=gbCounts(boards,t),rows=[],cols=[];for(var r=0;r<GB_R;r++){var s=0;for(var c=0;c<GB_C;c++)s+=k.c[r*GB_C+c];rows.push(k.n?s/k.n:0)}for(c=0;c<GB_C;c++){s=0;for(r=0;r<GB_R;r++)s+=k.c[r*GB_C+c];cols.push(k.n?s/k.n:0)}return{rows:rows,cols:cols,n:k.n}}
+function gbStreak(boards,t){var b=boards.slice().sort(function(x,y){return x.date<y.date?1:-1}),seen=0,last=null,streak=0,run=true,prev=null;
+ b.forEach(function(x){var on=gbIdx(x[t])>=0;if(on){seen++;if(!last)last=x.date}
+  if(run){var wk=gbWed(x.date);if(prev&&(new Date(prev)-new Date(wk))/864e5!==7)run=false;if(run&&on){streak++;prev=wk}else run=false}});
+ return{seen:seen,total:b.length,streak:streak,last:last}}
+function gbToCSV(boards){return'date,fuel,basket,runner\n'+boards.slice().sort(function(x,y){return x.date<y.date?-1:1}).map(function(b){return[b.date,b.fuel||'none',b.basket||'none',b.runner||'none'].join(',')}).join('\n')+'\n'}
+function gbParseLine(line){var atoms=line.replace(/["']/g,'').split(/\s*[,;\t]\s*|\s{2,}/).filter(function(x){return x!==''});if(!atoms.length)return{err:'Empty line'};
+ var date=gbParseDate(atoms[0]);if(!date)return{err:'Date "'+atoms[0]+'" not understood (use DD/MM/YYYY or YYYY-MM-DD)'};var cells=[],i=1;
+ while(i<atoms.length&&cells.length<3){var a=atoms[i];if(/^\d+$/.test(a)&&/^\d+$/.test(atoms[i+1]||'')){cells.push(gbParseCell(a+','+atoms[i+1]));i+=2}else{cells.push(gbParseCell(a));i++}}
+ if(cells.length<3)return{date:date,err:'Needs 3 cells (fuel, basket, runner), found '+cells.length};if(i<atoms.length)return{date:date,err:'Extra values at the end'};
+ var bad=cells.map(function(c,j){return c?'':GB_T[j]}).filter(Boolean);if(bad.length)return{date:date,err:'Cell not understood for '+bad.join(', ')+' (rows 1-5, columns 1-4)'};
+ return{date:gbWed(date),fuel:cells[0],basket:cells[1],runner:cells[2]}}
+function gbParseCSV(text){var out=[],weeks={};String(text||'').split(/\r?\n/).forEach(function(l,n){if(!l.trim())return;if(/date/i.test(l)&&/fuel|basket|runner/i.test(l))return;var r=gbParseLine(l);r.line=n+1;r.raw=l.trim();
+  if(!r.err){if(weeks[r.date])r.err='Same week as line '+weeks[r.date];else weeks[r.date]=r.line}r.ok=!r.err;out.push(r)});return out}
+function gbChecks(){var out=[];function t(n,a,b){out.push({name:'Gameboard: '+n,pass:typeof b==='number'?Math.abs(a-b)<1e-9:a===b,got:a,want:b})}
+ var B=[{date:'2026-10-28',fuel:'R4C1',basket:'R4C3',runner:'R3C1'},{date:'2026-10-21',fuel:'R4C1',basket:'R1C1',runner:'none'},{date:'2026-10-14',fuel:'R2C2',basket:'R1C1',runner:'R3C1'},{date:'2026-10-07',fuel:'R4C1',basket:'none',runner:'R5C4'}];
+ var p=gbProbs(B,'fuel',1);t('smoothing: R4C1 = (3+1)/(4+20) = 1/6',p[gbIdx('R4C1')],4/24);t('smoothing: unseen cell = 1/24, not 0',p[gbIdx('R5C4')],1/24);t('smoothing: probabilities add to 1',p.reduce(function(a,b){return a+b},0),1);
+ t('smoothing 0: unseen cell = 0',gbProbs(B,'fuel',0)[0],0);t('no data: every cell 5%',gbProbs([],'fuel',1)[7],0.05);t('basket ignores "none" (R1C1 = 3/23)',gbProbs(B,'basket',1)[0],3/23);
+ var top=gbTop3(B,'fuel',1);t('top-3 #1 = R4C1',top[0].cell,'R4C1');t('top-3 #2 = R2C2',top[1].cell,'R2C2');t('top-3 #3 tie goes to first cell R1C1',top[2].cell,'R1C1');t('runner top = R3C1',gbTop3(B,'runner',1)[0].cell,'R3C1');
+ var csv=gbToCSV(B),back=gbParseCSV(csv);t('CSV header',csv.split('\n')[0],'date,fuel,basket,runner');t('CSV round-trip same boards',JSON.stringify(back.map(function(r){return[r.date,r.fuel,r.basket,r.runner]})),JSON.stringify(B.slice().reverse().map(function(r){return[r.date,r.fuel,r.basket,r.runner]})));
+ t('paste: R4C1 style','R4C1',gbParseLine('2026-10-28,R4C1,R4C3,R3C1').fuel);t('paste: lower r4c1 + DD/MM/YYYY',gbParseLine('28/10/2026,r4c1,r4c3,-').date+gbParseLine('28/10/2026,r4c1,r4c3,-').runner,'2026-10-28none');
+ t('paste: "4,1" pairs',gbParseLine('28/10/2026,4,1,4,3,3,1').basket,'R4C3');t('paste: quoted pairs + none',gbParseLine('2026-10-28,"4,1",none,"3,1"').runner,'R3C1');t('paste: 4 1 spaced',gbParseCell('4 1'),'R4C1');
+ t('paste: row 6 rejected',!!gbParseLine('2026-10-28,R6C1,none,none').err,true);t('paste: bad date rejected',!!gbParseLine('31/02/2026,R4C1,none,none').err,true);t('paste: missing cell rejected',!!gbParseLine('2026-10-28,R4C1,none').err,true);
+ t('paste: non-Wednesday snaps to that week\'s Wednesday',gbParseLine('2026-10-30,R1C1,none,none').date,'2026-10-28');var dup=gbParseCSV('date,fuel,basket,runner\n2026-10-28,R1C1,none,none\n2026-10-29,R2C2,none,none');t('paste: duplicate week flagged on its line',dup[1].ok+':'+dup[1].line,'false:3');
+ var s=gbStreak(B,'fuel');t('streaks: fuel seen 4 of 4',s.seen+'/'+s.total,'4/4');t('streaks: fuel current streak 4',s.streak,4);var r=gbStreak(B,'runner');t('streaks: runner seen 3, streak 1',r.seen+':'+r.streak,'3:1');t('streaks: runner last seen 28 Oct',r.last,'2026-10-28');
+ t('streaks: gap week breaks streak',gbStreak([{date:'2026-10-28',fuel:'R1C1'},{date:'2026-10-14',fuel:'R1C1'}],'fuel').streak,1);t('most recent Wednesday of Mon 2 Nov = 28 Oct',gbWed('2026-11-02'),'2026-10-28');
+ return out}
+
+if(typeof module!=='undefined')module.exports={gbChecks:gbChecks,gbParseCSV:gbParseCSV,gbProbs:gbProbs,gbTop3:gbTop3,gbStreak:gbStreak,gbToCSV:gbToCSV,parseSlip:parseSlip,mergeParses:mergeParses,calcHFMonth:calcHFMonth,calcHCMonth:calcHCMonth,calcHBMonth:calcHBMonth,calcFuelMonth:calcFuelMonth,runChecks:runChecks,assessWindow:assessWindow,DEFAULTS:DEFAULTS};
 /*CALC_END*/
 var KEY='vitalityRewards.v1';
 function deepMerge(d,o){var r=JSON.parse(JSON.stringify(d));for(var k in o){if(o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k])&&r[k])r[k]=deepMerge(r[k],o[k]);else r[k]=o[k]}return r}
 function load(){try{var d=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){d={}}
  var st0=d.settings||{};if(d.settings&&!st0.splitV){if(st0.hc&&+st0.hc.bankPct===50)st0.hc.bankPct=25;if(st0.hb&&+st0.hb.bankPct===50)st0.hb.bankPct=25;if(st0.bank&&st0.bank.hcCardOn&&st0.bank.hbCardOn==null)st0.bank.hbCardOn=true;if(st0.fuel&&st0.fuel.pct!=null&&st0.fuel.pct!==''){var fp=num(st0.fuel.pct);st0.fuel.drivePct=Math.min(50,fp);st0.fuel.bankPct=Math.max(0,fp-50);delete st0.fuel.pct}}st0.splitV=1;if(st0.hf&&/Woolies/.test(st0.hf.primaryOnline||''))st0.hf.primaryOnline='Woolworths online';
  (d.hf||[]).forEach(function(e){if(/Woolies/.test(e.shop||''))e.shop='Woolworths online';e.channel=hfChannel(e.shop)});
- return{settings:deepMerge(DEFAULTS,st0),hf:d.hf||[],hc:d.hc||[],fuel:d.fuel||[],hb:d.hb||(d.bru||[]).map(function(e){e.partner=e.partner||'Babies R Us';return e})}}
+ return{settings:deepMerge(DEFAULTS,st0),hf:d.hf||[],hc:d.hc||[],fuel:d.fuel||[],gb:d.gb||[],hb:d.hb||(d.bru||[]).map(function(e){e.partner=e.partner||'Babies R Us';return e})}}
 var DB=load();function save(){localStorage.setItem(KEY,JSON.stringify(DB))}
 var S=function(){return DB.settings};
 function R(x){return 'R'+num(x).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
@@ -215,7 +270,7 @@ function M(x){return Math.round(x).toLocaleString('en-US')+' Miles'}
 function esc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
 var monthEl=document.getElementById('month');var now=new Date();monthEl.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
 monthEl.onchange=render;function inMonth(a){return a.filter(function(e){return (e.date||'').slice(0,7)===monthEl.value})}
-var TABS=['HealthyFood','HealthyCare','HealthyBaby','Fuel','Monthly Totals','Settings'],tab='HealthyFood',editing=null;
+var TABS=['HealthyFood','HealthyCare','HealthyBaby','Fuel','Gameboard','Monthly Totals','Settings'],tab='HealthyFood',editing=null;
 function today(){var d=new Date();return d.toISOString().slice(0,10)}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 var FORMS={
@@ -275,7 +330,7 @@ function viewTotals(){var s=S(),hf=calcHFMonth(inMonth(DB.hf),s),hc=calcHCMonth(
  h+='<div class="card"><div class="muted">All sections split</div>'+splitSum([].concat(hf,hc,hb,fu),'Vitality (incl. Drive)')+'</div>';
  rows.forEach(function(r){var v=sum(r[1],'reward');h+='<div class="card"><h3>'+r[0]+'</h3><div class="bar"><i style="width:'+(v/mx*100)+'%;background:'+r[2]+'"></i></div>'+splitSum(r[1],r[0]==='Fuel'?'Vitality Drive':'Vitality')+'<div class="grid"><div>Reward<b>'+R(v)+'</b></div><div>Miles<b>'+M(sum(r[1],'miles'))+'</b></div><div>Qualifying spend<b>'+R(sum(r[1],'qualifying'))+'</b></div><div>Effective cost<b>'+R(sum(r[1],'effective'))+'</b></div></div></div>'});
  return h}
-var SPLITLAB='Vitality',setAdv=false;var SET=[['Membership',[['membership','Membership type (sets which cap is used)','select',['single','family']]],1],
+var SPLITLAB='Vitality',setAdv=false;var SET=[['Gameboard (just for fun)',[['gb.smooth','Smoothing for the Lucky guess (default 1; higher = flatter guesses, 0 = raw counts)','number']],1],['Membership',[['membership','Membership type (sets which cap is used)','select',['single','family']]],1],
  ['Assessments',[['assess.ageDone','Vitality Age assessment done','checkbox'],['assess.ageDate','Vitality Age date','date'],['assess.checkDone','Vitality Health Check done','checkbox'],['assess.checkDate','Health Check date','date']],1],
  ['Your partners',[['hf.primaryInstore','HealthyFood primary in-store partner','select',['Checkers','Woolworths']],['hf.primaryOnline','HealthyFood primary online partner','select',['Checkers Sixty60','Woolworths online']],['hc.primary','HealthyCare primary partner','select',['Clicks','Dis-Chem']]],1],
  ['Miles',[['milesPerRand','Discovery Miles per R1','number']]],
@@ -465,10 +520,62 @@ function renderReview(){var st=scanState,p=st.p,k=st.kind,opts=FORMS[k].filter(f
   if(k==='hf'){e.shop=shop;e.channel=hfChannel(shop);e.qualifying=qq}else if(k==='hc'){e.partner=shop;e.qualifying=qq}else{e.partner=shop;e.amount=qq;e.note='Scanned slip'}
   DB[k].push(e);save();scanState=null;render()}}
 function renderReviewKeep(){var y=scrollY,d=document.getElementById('rv_date').value,t=document.getElementById('rv_till').value,s=document.getElementById('rv_shop').value;var mv=document.getElementById('rv_manual').value;renderReview();document.getElementById('rv_manual').value=mv;document.getElementById('rv_date').value=d;document.getElementById('rv_till').value=t;document.getElementById('rv_shop').value=s;scrollTo(0,y)}
-var TABI={'HealthyFood':['🥦','Food'],'HealthyCare':['💊','Care'],'HealthyBaby':['🍼','Baby'],'Fuel':['⛽','Fuel'],'Monthly Totals':['📊','Totals'],'Settings':['⚙️','Settings']};
+// ---- Gameboard UI ----
+var gbView='log',gbDraft=null,gbTile='fuel',gbDelArm=null,gbPaste='',gbPrev=null,gbMsg='';
+var GBI={fuel:['⛽','Fuel'],basket:['🧺','Basket'],runner:['🏃','Runner']};
+function gbNewDraft(b){return b?{id:b.id,date:b.date,fuel:b.fuel,basket:b.basket,runner:b.runner}:{id:null,date:gbWed(today()),fuel:null,basket:null,runner:null}}
+function gbFmt(d){if(!d)return'never';var x=new Date(d+'T00:00:00Z');return x.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][x.getUTCMonth()]+' '+x.getUTCFullYear()}
+function gbDup(d){var wk=gbWed(d.date||'');return DB.gb.find(function(b){return b.date===wk&&b.id!==d.id})}
+function gbBoards(){return DB.gb.slice().sort(function(a,b){return a.date<b.date?1:-1})}
+function viewGB(){var h='<div class="gbseg">'+[['log','📝 Log'],['stats','🔥 Stats'],['guess','🪙 Guess'],['data','📋 Data']].map(function(v){return'<button class="'+(gbView===v[0]?'on':'')+'" data-gbv="'+v[0]+'">'+v[1]+'</button>'}).join('')+'</div>';
+ return h+({log:gbLog,stats:gbStats,guess:gbGuess,data:gbData}[gbView])()}
+function gbLog(){if(!gbDraft)gbDraft=gbNewDraft();var d=gbDraft,dup=gbDup(d),h='<div class="card gbc"><h3>'+(d.id?'Edit board':'Log this week\'s board')+'</h3>';
+ h+='<label>Board date (week starts Wednesday)<input type="date" id="gbdate" value="'+esc(d.date)+'"></label>';
+ h+='<div class="err" id="gbdup">'+(dup?'You already logged the week of '+gbFmt(dup.date)+'. <button class="s" data-gbed="'+dup.id+'">Edit that week</button>':'')+'</div>';
+ h+='<div class="hint">1. Pick a tile. 2. Tap where it landed.</div><div class="gbtiles">'+GB_T.map(function(t){var v=d[t];return'<button data-gbt="'+t+'" class="'+(gbTile===t?'on':'')+'"><span>'+GBI[t][0]+' '+GBI[t][1]+'</span><small>'+(v==null?'not set':v==='none'?'not present':v)+'</small></button>'}).join('')+'</div>';
+ h+='<div class="gbgrid">';for(var i=0;i<20;i++){var c=gbCellName(i),here=GB_T.filter(function(t){return d[t]===c});h+='<button data-gbc="'+c+'" class="'+(here.indexOf(gbTile)>=0?'on':'')+'" aria-label="'+c+'">'+(here.length?here.map(function(t){return GBI[t][0]}).join(''):'<i>'+c+'</i>')+'</button>'}
+ h+='</div><button class="s gbnone'+(d[gbTile]==='none'?' on':'')+'" id="gbnone">'+GBI[gbTile][0]+' '+GBI[gbTile][1]+' not on the board this week</button>';
+ h+='<div class="err" id="gberr">'+esc(gbMsg)+'</div><button class="b gbgo" id="gbsave">Save board</button>'+(d.id?'<button class="s" id="gbcancel">Cancel</button>':'')+'</div>';
+ var L=gbBoards();h+='<div class="card"><h3>Logged boards ('+L.length+')</h3>'+(L.length?'':'<div class="muted">Nothing yet. Log a board above or paste your history under Data.</div>');
+ L.forEach(function(b){h+='<div class="gbrow"><div><b>'+gbFmt(b.date)+'</b><div class="muted">'+GB_T.map(function(t){return GBI[t][0]+' '+(b[t]==='none'||!b[t]?'—':b[t])}).join(' · ')+'</div></div><div><button class="s" data-gbed="'+b.id+'">Edit</button><button class="s" data-gbdel="'+b.id+'">'+(gbDelArm===b.id?'Tap again to delete':'Delete')+'</button></div></div>'});
+ return h+'</div>'}
+function gbHeat(t){var B=DB.gb,k=gbCounts(B,t),rc=gbRowCol(B,t),mx=Math.max.apply(null,k.c)||1,h='<div class="card gbc"><h3>'+GBI[t][0]+' '+GBI[t][1]+' <span class="muted">seen on '+k.n+' of '+B.length+' boards</span></h3><div class="gbheat">';
+ for(var r=0;r<5;r++){for(var c=0;c<4;c++){var n=k.c[r*4+c],a=n/mx;h+='<div style="background:rgba(107,63,160,'+(0.08+0.82*a).toFixed(2)+');color:'+(a>0.5?'#fff':'#3b2a5c')+'"><b>'+n+'</b><small>R'+(r+1)+'C'+(c+1)+'</small></div>'}h+='<div class="gbpct">Row '+(r+1)+'<b>'+Math.round(rc.rows[r]*100)+'%</b></div>'}
+ for(c=0;c<4;c++)h+='<div class="gbpct">Col '+(c+1)+'<b>'+Math.round(rc.cols[c]*100)+'%</b></div>';return h+'<div></div></div></div>'}
+function gbStats(){var B=DB.gb;if(!B.length)return'<div class="card muted">No boards yet. Log one or paste your history under Data.</div>';
+ var h='<div class="card gbc"><h3>Streaks</h3><div class="gbstreak">'+GB_T.map(function(t){var s=gbStreak(B,t);return'<div><span>'+GBI[t][0]+'</span><b>'+s.seen+'/'+s.total+'</b><small>weeks seen</small><b>'+s.streak+'</b><small>week streak now</small></div>'}).join('')+'</div><div class="muted">🏃 Runner last seen: <b>'+gbFmt(gbStreak(B,'runner').last)+'</b></div></div>';
+ return h+GB_T.map(gbHeat).join('')+'<div class="muted">Number = times that tile sat in that cell. Row and column % = share of that tile\'s appearances.</div>'}
+function gbGuess(){var B=DB.gb,a=num(S().gb&&S().gb.smooth);var conf=B.length<10?'Very low, just for fun':'Low, just for fun';
+ var h='<div class="gbguess"><div class="gbhead"><b>🪙 Lucky guess</b><span class="gbconf">Confidence: '+conf+'</span></div><div class="muted" style="text-align:center">From '+B.length+' logged board'+(B.length===1?'':'s')+' · smoothing '+a+'</div>';
+ GB_T.forEach(function(t){var top=gbTop3(B,t,a),h2='<div class="gbmini">';for(var i=0;i<20;i++){var k=top.findIndex(function(x){return x.i===i});h2+='<i class="'+(k===0?'g':k>0?'s':'')+'">'+(k>=0?k+1:'')+'</i>'}h2+='</div>';
+  h+='<div class="card gbpc"><div class="gbpt">'+GBI[t][0]+'<b>'+GBI[t][1]+'</b></div>'+h2+'<ol>'+top.map(function(x,k){return'<li class="'+(k?'s':'g')+'"><b>'+x.cell+'</b> '+(x.p*100).toFixed(1)+'%</li>'}).join('')+'</ol></div>'});
+ return h+'<div class="gbdisc">Tile placement appears random. This is for entertainment only and can\'t predict the real board.</div></div>'}
+function gbData(){var h='<div class="card gbc"><h3>Export</h3><button class="b" id="gbcsv">⬇️ Download CSV</button><div class="hint">Boards are also in the Settings → Advanced → Export JSON backup.</div></div>';
+ h+='<div class="card gbc"><h3>Paste dataset</h3><div class="hint">One board per line: <b>date,fuel,basket,runner</b>. Example: <code>28/10/2026,R4C1,R4C3,R3C1</code>. Cells can be R4C1, r4c1 or 4,1. Use none or - if the tile was not there.</div><textarea id="gbpaste" rows="7" placeholder="date,fuel,basket,runner&#10;2026-10-28,R4C1,R4C3,R3C1&#10;21/10/2026,4,1,none,3,1">'+esc(gbPaste)+'</textarea><button class="b" id="gbprev">Check it</button>';
+ if(gbPrev){var ok=gbPrev.filter(function(r){return r.ok}),bad=gbPrev.length-ok.length,over=ok.filter(function(r){return DB.gb.some(function(b){return b.date===r.date})}).length;
+  h+='<div class="'+(bad?'warn':'ok')+'">'+ok.length+' line'+(ok.length===1?'':'s')+' ready'+(bad?', '+bad+' with a problem (skipped)':'')+(over?'. '+over+' will replace weeks you already logged':'')+'.</div><div class="gbprev">'+gbPrev.slice().sort(function(a,b){return a.ok-b.ok||a.line-b.line}).map(function(r){return'<div class="'+(r.ok?'':'bad')+'"><span>'+r.line+'</span>'+(r.ok?'✅ '+gbFmt(r.date)+' · ⛽ '+r.fuel+' · 🧺 '+r.basket+' · 🏃 '+r.runner:'❌ <code>'+esc(r.raw)+'</code><br>'+esc(r.err))+'</div>'}).join('')+'</div>';
+  if(ok.length)h+='<button class="b gbgo" id="gbimp">Import '+ok.length+' board'+(ok.length===1?'':'s')+'</button>'}
+ if(gbMsg)h+='<div class="ok">'+esc(gbMsg)+'</div>';return h+'</div>'}
+function bindGB(){var q=function(s){return document.querySelectorAll(s)},g=function(i){return document.getElementById(i)};
+ q('[data-gbv]').forEach(function(b){b.onclick=function(){gbView=b.dataset.gbv;gbMsg='';gbDelArm=null;render();scrollTo(0,0)}});
+ q('[data-gbt]').forEach(function(b){b.onclick=function(){gbTile=b.dataset.gbt;render()}});
+ q('[data-gbc]').forEach(function(b){b.onclick=function(){var c=b.dataset.gbc;gbDraft[gbTile]=gbDraft[gbTile]===c?null:c;gbMsg='';var nx=GB_T.find(function(t){return gbDraft[t]==null});if(gbDraft[gbTile]===c&&nx)gbTile=nx;render()}});
+ if(g('gbnone'))g('gbnone').onclick=function(){gbDraft[gbTile]=gbDraft[gbTile]==='none'?null:'none';var nx=GB_T.find(function(t){return gbDraft[t]==null});if(gbDraft[gbTile]&&nx)gbTile=nx;gbMsg='';render()};
+ if(g('gbdate'))g('gbdate').onchange=function(){gbDraft.date=this.value;gbMsg='';render()};
+ if(g('gbsave'))g('gbsave').onclick=function(){var d=gbDraft;if(!gbParseDate(d.date)){gbMsg='Pick a date.';return render()}if(gbDup(d)){gbMsg='That week is already logged. Edit it instead.';return render()}
+  var miss=GB_T.filter(function(t){return d[t]==null});if(miss.length){gbMsg='Place or mark "not present" for: '+miss.map(function(t){return GBI[t][1]}).join(', ')+'.';return render()}
+  var rec={id:d.id||uid(),date:gbWed(d.date),fuel:d.fuel,basket:d.basket,runner:d.runner},i=DB.gb.findIndex(function(b){return b.id===rec.id});if(i>=0)DB.gb[i]=rec;else DB.gb.push(rec);save();gbDraft=null;gbTile='fuel';gbMsg='';render()};
+ if(g('gbcancel'))g('gbcancel').onclick=function(){gbDraft=null;gbMsg='';render()};
+ q('[data-gbed]').forEach(function(b){b.onclick=function(){gbDraft=gbNewDraft(DB.gb.find(function(x){return x.id===b.dataset.gbed}));gbMsg='';render();scrollTo(0,0)}});
+ q('[data-gbdel]').forEach(function(b){b.onclick=function(){var id=b.dataset.gbdel;if(gbDelArm!==id){gbDelArm=id;return render()}DB.gb=DB.gb.filter(function(x){return x.id!==id});gbDelArm=null;if(gbDraft&&gbDraft.id===id)gbDraft=null;save();render()}});
+ if(g('gbcsv'))g('gbcsv').onclick=function(){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([gbToCSV(DB.gb)],{type:'text/csv'}));a.download='gameboard.csv';a.click()};
+ if(g('gbpaste'))g('gbpaste').oninput=function(){gbPaste=this.value};
+ if(g('gbprev'))g('gbprev').onclick=function(){gbPaste=g('gbpaste').value;gbPrev=gbParseCSV(gbPaste);gbMsg='';render()};
+ if(g('gbimp'))g('gbimp').onclick=function(){var n=0;gbPrev.filter(function(r){return r.ok}).forEach(function(r){var rec={id:uid(),date:r.date,fuel:r.fuel,basket:r.basket,runner:r.runner},i=DB.gb.findIndex(function(b){return b.date===r.date});if(i>=0){rec.id=DB.gb[i].id;DB.gb[i]=rec}else DB.gb.push(rec);n++});save();gbPrev=null;gbPaste='';gbMsg='Imported '+n+' boards. See them under Stats and Guess.';render()}}
+var TABI={'HealthyFood':['🥦','Food'],'HealthyCare':['💊','Care'],'HealthyBaby':['🍼','Baby'],'Fuel':['⛽','Fuel'],'Gameboard':['🎲','Board'],'Monthly Totals':['📊','Totals'],'Settings':['⚙️','Settings']};
 function render(){if(scanState)return renderReview();document.getElementById('tabs').innerHTML=TABS.map(function(t){return'<button data-t="'+t+'" class="'+(t===tab?'on':'')+'" aria-label="'+t+'"><span class="ic">'+TABI[t][0]+'</span>'+TABI[t][1]+'</button>'}).join('');
  document.querySelectorAll('#tabs button').forEach(function(b){b.onclick=function(){tab=b.dataset.t;editing=null;render();scrollTo(0,0)}});
- var map={'HealthyFood':['hf',viewHF],'HealthyCare':['hc',viewHC],'HealthyBaby':['hb',viewHB],'Fuel':['fuel',viewFuel],'Monthly Totals':[null,viewTotals],'Settings':[null,viewSettings]}[tab];
- document.getElementById('app').innerHTML=(['hf','hc','hb'].indexOf(map[0])>=0?scanBtn(map[0]):'')+map[1]();bindScan(map[0]);if(map[0])bindForm(map[0]);if(tab==='Settings'){}if(tab==='Settings')bindSettings();bindActs()}
+ var map={'HealthyFood':['hf',viewHF],'HealthyCare':['hc',viewHC],'HealthyBaby':['hb',viewHB],'Fuel':['fuel',viewFuel],'Gameboard':[null,viewGB],'Monthly Totals':[null,viewTotals],'Settings':[null,viewSettings]}[tab];
+ document.getElementById('app').innerHTML=(['hf','hc','hb'].indexOf(map[0])>=0?scanBtn(map[0]):'')+map[1]();bindScan(map[0]);if(map[0])bindForm(map[0]);if(tab==='Settings'){}if(tab==='Settings')bindSettings();if(tab==='Gameboard')bindGB();bindActs()}
 render();
 </script><script>if('serviceWorker' in navigator&&location.protocol!=='file:')navigator.serviceWorker.register('sw.js')</script></body></html>

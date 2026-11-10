@@ -1,4 +1,4 @@
-const C='vr-v7',F=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','assets/tesseract.min.js','assets/worker.min.js','assets/tesseract-core-lstm.wasm.js','assets/eng.traineddata.gz'];
+const C='vr-v7-gb',F=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','assets/tesseract.min.js','assets/worker.min.js','assets/tesseract-core-lstm.wasm.js','assets/eng.traineddata.gz'];
 
 function mimeFor(u){
   var p=new URL(u,self.location.href).pathname;
